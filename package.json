@@ -29,7 +29,7 @@
     "live": "parcel src/index.html --target browser --no-source-maps --bundle-node-modules --out-dir ./live --port 2000",
     "build:clean": "rimraf build/*",
     "build:src": "parcel build src/index.html --target browser --no-source-maps --public-url ./ --bundle-node-modules --out-dir ./build",
-    "build": "npm-run-all build:clean build:src",
+    "predeploy": "npm-run-all build:clean build:src",
     "deploy": "gh-pages -d build"
   },
   "keywords": [],
