@@ -96,7 +96,7 @@ export class AccCore {
             this._phase = 0.0;
             this._prevPeriod = this._period;
             this._periodStartTime = t;
-            const result = 0.0;
+            //const result = 0.0;
             //console.log(`++++ START: ph=${this._phase.toFixed(2)}, P=${this._period.toFixed(2)}, PP=${this._prevPeriod.toFixed(2)}, PT=${this._periodStartTime.toFixed(2)}, t=${(t-this._t0)}, y=0.00`);
             return 0.0;
         }
@@ -171,7 +171,7 @@ export class AccCore {
             }
 
             // The last period measurement was more than 1.5 periods ago:
-            if (this._lastPeriodMeasuredTime && (t - this._lastPeriodMeasuredTime > this._period * 1.5)) {
+            if (this._lastPeriodMeasuredTime && (t - this._lastPeriodMeasuredTime > this._period! * 1.5)) {
                 // console.log("++++++++++ 2");
                 this._period = AccCore.INFINITE_PERIOD;
             }

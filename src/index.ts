@@ -29,8 +29,8 @@ const chart = new SmoothieChart({
 });
 const accSeries = new TimeSeries();
 const debugAccSeries = new TimeSeries();
-//const ticksSeries = new TimeSeries();
-const periodSeries = new TimeSeries();
+// const ticksSeries = new TimeSeries();
+// const periodSeries = new TimeSeries();
 if (showChart) {
     chart.addTimeSeries(accSeries, {lineWidth: 2, strokeStyle: "#00ffff"});
     chart.addTimeSeries(debugAccSeries, {lineWidth: 2, strokeStyle: "#00dd00"});
