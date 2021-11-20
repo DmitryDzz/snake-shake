@@ -1,0 +1,53 @@
+#container {
+    position: relative;
+}
+
+#chart_canvas {
+    position: absolute;
+    /* width: 850px;
+    height: 1400px; */
+}
+
+#animation_canvas {
+    /* background-color: skyblue; */
+    position: absolute;
+    /* width: 40px;
+    height: 1400px; */
+    right: 0px;
+    top: 0px;
+}
+
+.legend {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+}
+
+body {
+    background-color: #2d2d2d;
+}
+
+div {
+    font-family: "Arial";
+    font-size: 24px;
+}
+
+div.blue {
+    color: #0000ff;
+}
+
+div.green {
+    color: #00dd00;
+}
+
+div.red {
+    color: red;
+}
+
+div.orange {
+    color: #ffff0080;
+}
+
+div.white {
+    color: #ffffff;
+}
