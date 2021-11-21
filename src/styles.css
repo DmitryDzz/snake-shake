@@ -55,3 +55,15 @@ div.orange {
 div.white {
     color: #ffffff;
 }
+
+button {
+    font-family: "Arial", serif;
+    font-size: 24px;
+    margin-top: 2ch;
+    padding: 1ch 3ch;
+    color: cadetblue;
+    border-radius: 2ch;
+    position: absolute;
+    right: 3ch;
+    top: 3ch;
+}

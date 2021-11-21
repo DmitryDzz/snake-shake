@@ -9,6 +9,7 @@ export class Options {
     minAccAmplitude: number = 1.0; // Values less than this value are equal to zero.
     maxPeriod: number = 3000; // Values greater than this value are equal to INFINITE_PERIOD.
     periodSpeed: number = 1000; // Milliseconds per millisecond. The period cannot be changed faster.
+    autoStart: boolean = true;
 }
 
 export class AccCore {
@@ -35,10 +36,11 @@ export class AccCore {
     private _prevYt: numberable = undefined;
     private _prevT0: numberable = undefined;
 
-    private _paused: boolean = false;
+    private _stopped: boolean = false;
 
     constructor(options?: Options) {
         this._options = options ?? new Options();
+        this._stopped = !this._options.autoStart;
     }
 
     private _clear() {
@@ -53,16 +55,16 @@ export class AccCore {
         this._prevY = undefined;
         this._prevYt = undefined;
         this._prevT0 = undefined;
-        this._paused = false;
+        this._stopped = false;
     }
 
-    pause() {
+    stop() {
         this._clear();
-        this._paused = true;
+        this._stopped = true;
     }
 
-    resume() {
-        if (this._paused) this._paused = false;
+    start() {
+        if (this._stopped) this._stopped = false;
     }
 
     getDebugAccY(): number {
@@ -89,7 +91,7 @@ export class AccCore {
     }
 
     getPosition11(t: number): number {
-        if (this._paused || this._period === undefined) return 0.0;
+        if (this._stopped || this._period === undefined) return 0.0;
         if (this._t0 === undefined) this._t0 = new Date().getTime();
 
         if (this._prevPeriod === undefined) {
@@ -129,7 +131,7 @@ export class AccCore {
     }
 
     update(acc: Measurement) {
-        if (this._paused) return;
+        if (this._stopped) return;
         const y = acc.y;
         const t = acc.t;
         if (this._prevY !== undefined) {
