@@ -1,13 +1,13 @@
 {
   "name": "web-shake",
-  "version": "1.1.2",
+  "version": "1.1.4",
   "description": "",
   "main": "index.js",
   "homepage": "https://dmitrydzz.github.io/web-shake",
   "dependencies": {
     "@types/w3c-generic-sensor": "^1.0.5",
     "create-typescript-project": "^0.8.0",
-    "nosleep": "^2.0.0",
+    "nosleep.js": "^0.12.0",
     "regenerator-runtime": "^0.13.9",
     "smoothie": "^1.35.0"
   },
@@ -19,6 +19,7 @@
     "jest": "^27.3.1",
     "npm-run-all": "^4.1.5",
     "parcel-bundler": "^1.12.5",
+    "parcel-plugin-static-files-copy": "^2.6.0",
     "prettier": "^2.4.1",
     "pretty-quick": "^3.1.2",
     "rimraf": "^3.0.2",
@@ -37,6 +38,15 @@
   "keywords": [],
   "author": "DmitryDzz",
   "license": "MIT",
+  "staticFiles": {
+    "staticPath": [
+      {
+        "staticPath": "src/images",
+        "staticOutDir": "images"
+      }
+    ],
+    "watcherGlob": "**"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged"

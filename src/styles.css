@@ -16,14 +16,52 @@
     z-index: 20;
 }
 
-#snake {
+#snake_div {
     position: absolute;
-    background-color: red;
-    width: 128px;
-    height: 128px;
-    border-radius: 2ch;
+    width: 256px;
+    height: 256px;
     z-index: 30;
 }
+
+#snake_img {
+    position: relative;
+    left: 0;
+    top: 0;
+    width: 256px;
+    height: 256px;
+    /*
+    -webkit-transition: transform 0.05s;
+    transition: transform 0.05s;
+    */
+
+    /*animation: squeeze 0.5s alternate infinite ease-in;*/
+    animation-name: squeeze, jump;
+    animation-duration: 0.5s, 0.5s;
+    animation-iteration-count: 1, 1;
+}
+
+@keyframes squeeze {
+    0%   {transform: scale3d(1, 1, 1);}
+    100% {transform: scale3d(1, 0.5, 1);}
+}
+@keyframes jump {
+    0%   {transform: scale3d(1, 0.5, 1);}
+    100% {transform: scale3d(1, 1, 1);}
+}
+
+/*
+#snake_img:hover{
+    -webkit-transform: scale3d(1, 0.5, 1);
+    transform: scale3d(1, 0.5, 1);
+}
+*/
+
+/*
+#snake_img.spring{
+    -webkit-transform: scale3d(1, 0.5, 1);
+    transform: scale3d(1, 0.5, 1);
+}
+*/
 
 .legend {
     position: absolute;
@@ -67,7 +105,7 @@ div.white {
 
 button {
     font-family: "Arial", serif;
-    font-size: 24px;
+    font-size: 36px;
     margin-top: 2ch;
     padding: 1ch 3ch;
     color: cadetblue;

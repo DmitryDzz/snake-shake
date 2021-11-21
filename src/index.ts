@@ -1,24 +1,71 @@
 import {SmoothieChart, TimeSeries} from "smoothie";
-import {Box2} from "./box2";
+import {Box} from "./box";
 import {AccCore} from "./acc_core";
+import NoSleep from "nosleep.js";
 import 'regenerator-runtime/runtime';
+
+let showChart: boolean = false;
 
 let textPeriod: HTMLDivElement | undefined = undefined;
 let accCore: AccCore | undefined = undefined;
-let box: Box2 | undefined = undefined;
+let box: Box | undefined = undefined;
 
 let accSensor: LinearAccelerationSensor | undefined = undefined;
 let chart: SmoothieChart | undefined = undefined;
 
-const onVisibilityChangeHandler = () => {
+let chartCanvas: HTMLCanvasElement | undefined = undefined;
+let startButton: HTMLButtonElement | undefined = undefined;
+enum State { Stopped, Started}
+let state: State = State.Stopped;
+
+let noSleep = new NoSleep();
+
+const onStartButtonClickHandler = async () => {
+    if (state === State.Stopped) {
+        state = State.Started;
+        if (startButton)
+            startButton.innerText = "Stop";
+        accCore?.start();
+        accSensor?.start();
+        if (chartCanvas && showChart)
+            chartCanvas.hidden = false;
+        if (showChart)
+            chart?.start();
+        await noSleep.enable();
+    } else if (state === State.Started) {
+        state = State.Stopped;
+        if (startButton)
+            startButton.innerText = "Start";
+        accCore?.stop();
+        accSensor?.stop();
+        if (chartCanvas)
+            chartCanvas.hidden = true;
+        chart?.stop();
+        await noSleep.disable();
+    }
+}
+
+const onVisibilityChangeHandler = async () => {
     if (document.visibilityState === "visible") {
-        console.log("++++++ visible");
-    } else {
-        console.log("++++++ invisible");
+        if (state === State.Started)
+            await noSleep.enable();
+    } else if (document.visibilityState === "hidden") {
+        if (state === State.Started)
+            await noSleep.disable();
     }
 };
 
-const makeNoSleep = () => {
+const initialize = () => {
+    const urlParams = new URLSearchParams(document.location.search);
+    showChart = urlParams.get("chart")?.toLowerCase() === "true" ?? false;
+
+    chartCanvas = document.getElementById("chart_canvas") as HTMLCanvasElement;
+    textPeriod = document.getElementById("text_period") as HTMLDivElement;
+
+    startButton = document.getElementById("start_button") as HTMLButtonElement;
+    startButton!.removeEventListener("click", onStartButtonClickHandler);
+    startButton!.addEventListener("click", onStartButtonClickHandler);
+
     document.removeEventListener("visibilitychange", onVisibilityChangeHandler);
     document.addEventListener("visibilitychange", onVisibilityChangeHandler);
 };
@@ -26,10 +73,6 @@ const makeNoSleep = () => {
 const startShaker = () => {
     const acc_sensor_frequency = 50;
 
-    const urlParams = new URLSearchParams(document.location.search);
-    const showChart: boolean = urlParams.get("chart")?.toLowerCase() === "true" ?? false;
-
-    const chartCanvas: HTMLCanvasElement = document.getElementById("chart_canvas") as HTMLCanvasElement;
     chart = new SmoothieChart({
         interpolation: "linear",
         millisPerPixel: 5,
@@ -62,12 +105,12 @@ const startShaker = () => {
         chart.streamTo(chartCanvas!, 500);
     }
 
-    textPeriod = document.getElementById("text_period") as HTMLDivElement;
-
     accCore = new AccCore();
-    box = new Box2(document.getElementById("animation_div")! as HTMLDivElement,
-        document.getElementById("snake")! as HTMLElement,
-        128, 20);
+    box = new Box(
+        document.getElementById("animation_div")! as HTMLDivElement,
+        document.getElementById("snake_div")! as HTMLDivElement,
+        document.getElementById("snake_img")! as HTMLImageElement,
+        256, 20);
 
     let startTimestamp: number | undefined = undefined;
 
@@ -97,9 +140,9 @@ const startShaker = () => {
             }
         });
 
-        accSensor.start();
-        // accSensor.stop();
-        // chart.stop();
+        // accSensor.start();
+        accSensor.stop();
+        chart.stop();
 
     } catch(e: any) {
         if (e.name === 'SecurityError') {
@@ -155,7 +198,7 @@ const outputError = (message: string) => {
             gyroscopePermissionStatus.state === "granted";
 
         if (hasPermissions) {
-            makeNoSleep();
+            initialize();
             try {
                 startShaker();
             } catch(e: any) {
