@@ -1,7 +1,14 @@
 import {SmoothieChart, TimeSeries} from "smoothie";
-import {Box} from "./box";
+import {Box2} from "./box2";
 import {AccCore} from "./acc_core";
 import 'regenerator-runtime/runtime';
+
+let textPeriod: HTMLDivElement | undefined = undefined;
+let accCore: AccCore | undefined = undefined;
+let box: Box2 | undefined = undefined;
+
+let accSensor: LinearAccelerationSensor | undefined = undefined;
+let chart: SmoothieChart | undefined = undefined;
 
 const onVisibilityChangeHandler = () => {
     if (document.visibilityState === "visible") {
@@ -23,7 +30,7 @@ const startShaker = () => {
     const showChart: boolean = urlParams.get("chart")?.toLowerCase() === "true" ?? false;
 
     const chartCanvas: HTMLCanvasElement = document.getElementById("chart_canvas") as HTMLCanvasElement;
-    const chart = new SmoothieChart({
+    chart = new SmoothieChart({
         interpolation: "linear",
         millisPerPixel: 5,
         minValue: -20,
@@ -37,7 +44,10 @@ const startShaker = () => {
         grid: {
             fillStyle: "#788ea1",
             //millisPerLine: 100, <-- doesn't work
-            verticalSections: 40
+            verticalSections: 40,
+            //lineWidth: 0.1,
+            sharpLines: true,
+            //strokeStyle: "black",
         }
     });
     const accSeries = new TimeSeries();
@@ -52,16 +62,20 @@ const startShaker = () => {
         chart.streamTo(chartCanvas!, 500);
     }
 
-    const textPeriod: HTMLDivElement = document.getElementById("text_period") as HTMLDivElement;
+    textPeriod = document.getElementById("text_period") as HTMLDivElement;
 
-    const accCore = new AccCore();
-    const box = new Box(document.getElementById("animation_canvas")! as HTMLCanvasElement, 1400, 40, 20);
+    accCore = new AccCore();
+    box = new Box2(document.getElementById("animation_div")! as HTMLDivElement,
+        document.getElementById("snake")! as HTMLElement,
+        128, 20);
 
     let startTimestamp: number | undefined = undefined;
 
     try {
-        const laSensor = new LinearAccelerationSensor({frequency: acc_sensor_frequency});
-        laSensor.addEventListener("reading", (ev: Event) => {
+        accSensor = new LinearAccelerationSensor({frequency: acc_sensor_frequency});
+        accSensor.addEventListener("reading", (ev: Event) => {
+            if (accCore === undefined) return;
+
             const sensorData: LinearAccelerationSensor = (ev.target as any) as LinearAccelerationSensor;
             const ts = sensorData.timestamp as number;
             const y = sensorData.y as number;
@@ -82,7 +96,11 @@ const startShaker = () => {
                 periodSeries.append(t, accCore.getPeriod() / 100);
             }
         });
-        laSensor.start();
+
+        accSensor.start();
+        // accSensor.stop();
+        // chart.stop();
+
     } catch(e: any) {
         if (e.name === 'SecurityError') {
             throw new Error("LinearAccelerationSensor construction was blocked by a feature policy.");
@@ -92,20 +110,26 @@ const startShaker = () => {
             throw e;
         }
     }
+};
 
-    const drawFrame = (): void => {
+const drawFrame = (): void => {
+    if (accCore !== undefined && box !== undefined && accCore.started) {
         const t = new Date().getTime();
-        const periodInSeconds = accCore.getPeriod() / 1000;
-        const periodLabelValue = periodInSeconds > 999 ? "INF" : periodInSeconds.toFixed(3);
-        textPeriod.innerText = `period: ${periodLabelValue} (s)`;
+
+        if (textPeriod !== undefined) {
+            const periodInSeconds = accCore.getPeriod() / 1000;
+            const periodLabelValue = periodInSeconds > 999 ? "INF" : periodInSeconds.toFixed(3);
+            textPeriod.innerText = `period: ${periodLabelValue} (s)`;
+        }
+
         //console.log(t);
         box.setPosition11(accCore.getPosition11(t));
-        requestAnimationFrame(drawFrame);
     }
+    requestAnimationFrame(drawFrame);
+}
 
-    window.onload = () => {
-        requestAnimationFrame(drawFrame);
-    };
+window.onload = () => {
+    requestAnimationFrame(drawFrame);
 };
 
 const outputError = (message: string) => {
@@ -116,13 +140,9 @@ const outputError = (message: string) => {
 
 (() => {
     console.log("Hello world!");
-    console.log(navigator.userAgent);
 
     const versionElement: HTMLDivElement = document.getElementById("version") as HTMLDivElement;
     versionElement.textContent = `version: ${process.env.npm_package_version}`;
-
-    const permissionsObj = navigator.permissions;
-    console.log("permissionsObj:", permissionsObj);
 
     (async () => {
         const accelerometerPermissionStatus = await navigator.permissions.query({

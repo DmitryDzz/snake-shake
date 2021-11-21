@@ -4,23 +4,32 @@
 
 #chart_canvas {
     position: absolute;
-    /* width: 850px;
-    height: 1400px; */
+    width: 850px;
+    height: 1400px;
+    z-index: 10;
 }
 
-#animation_canvas {
-    /* background-color: skyblue; */
+#animation_div {
     position: absolute;
-    /* width: 40px;
-    height: 1400px; */
-    right: 0px;
-    top: 0px;
+    width: 850px;
+    height: 1400px;
+    z-index: 20;
+}
+
+#snake {
+    position: absolute;
+    background-color: red;
+    width: 128px;
+    height: 128px;
+    border-radius: 2ch;
+    z-index: 30;
 }
 
 .legend {
     position: absolute;
     left: 20px;
     top: 20px;
+    z-index: 40;
 }
 
 body {
@@ -66,4 +75,5 @@ button {
     position: absolute;
     right: 3ch;
     top: 3ch;
+    z-index: 50;
 }

@@ -9,7 +9,7 @@ export class Options {
     minAccAmplitude: number = 1.0; // Values less than this value are equal to zero.
     maxPeriod: number = 3000; // Values greater than this value are equal to INFINITE_PERIOD.
     periodSpeed: number = 1000; // Milliseconds per millisecond. The period cannot be changed faster.
-    autoStart: boolean = true;
+    autoStart: boolean = false;
 }
 
 export class AccCore {
@@ -65,6 +65,14 @@ export class AccCore {
 
     start() {
         if (this._stopped) this._stopped = false;
+    }
+
+    get stopped(): boolean {
+        return this._stopped;
+    }
+
+    get started(): boolean {
+        return !this._stopped;
     }
 
     getDebugAccY(): number {
