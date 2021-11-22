@@ -100,8 +100,8 @@ export class AccCore {
 
     getPosition11(t: number): number {
         // FAKE PERIOD AND POSITION TO TEST ANIMATIONS:
-        this._period = 3000;
-        return Math.sin(AccCore.TWO_PI * t / this._period);
+        // this._period = 500;
+        // return Math.sin(AccCore.TWO_PI * t / this._period);
 
         if (this._stopped || this._period === undefined) return 0.0;
         if (this._t0 === undefined) this._t0 = new Date().getTime();

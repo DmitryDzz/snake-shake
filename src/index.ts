@@ -28,7 +28,7 @@ const onStartButtonClickHandler = async () => {
         accCore?.start();
         accSensor?.start();
         if (chartCanvas && showChart)
-            chartCanvas.hidden = false;
+            chartCanvas.style.visibility = "visible";
         if (showChart)
             chart?.start();
         await noSleep.enable();
@@ -39,7 +39,7 @@ const onStartButtonClickHandler = async () => {
         accCore?.stop();
         accSensor?.stop();
         if (chartCanvas)
-            chartCanvas.hidden = true;
+            chartCanvas.style.visibility = "hidden";
         chart?.stop();
         await noSleep.disable();
     }
@@ -109,7 +109,9 @@ const startShaker = () => {
     box = new Box(
         document.getElementById("animation_div")! as HTMLDivElement,
         document.getElementById("snake_div")! as HTMLDivElement,
-        document.getElementById("snake_img")! as HTMLImageElement,
+        document.getElementById("snake_head_img")! as HTMLImageElement,
+        document.getElementById("snake_body_img")! as HTMLImageElement,
+        document.getElementById("snake_tongue_img")! as HTMLImageElement,
         256, 20, accCore);
 
     let startTimestamp: number | undefined = undefined;
