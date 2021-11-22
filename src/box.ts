@@ -1,12 +1,18 @@
+import {AccCore} from "./acc_core";
+
 export class Box {
     private readonly _snakeDiv: HTMLDivElement;
     private readonly _snakeImage: HTMLImageElement;
+    private readonly _accCore: AccCore;
     private readonly _screenZeroY: number;
     private readonly _maxDeltaY: number;
 
-    constructor(parentDiv: HTMLDivElement, snakeDiv: HTMLDivElement, snakeImage: HTMLImageElement, boxSize: number, padding: number) {
+    constructor(parentDiv: HTMLDivElement, snakeDiv: HTMLDivElement, snakeImage: HTMLImageElement,
+                boxSize: number, padding: number, accCore: AccCore) {
         this._snakeDiv = snakeDiv;
         this._snakeImage = snakeImage;
+        this._accCore = accCore;
+
         const minY = padding;
         const screenHeight = parentDiv.offsetHeight;
         const maxY = screenHeight - padding - boxSize;
@@ -23,18 +29,16 @@ export class Box {
      * y11 - value in interval [-1..1].
      **/
     setPosition11(y11: number) {
-        if (this._prevY11 > 0 && y11 < 0) {
-            this._snakeImage.style.animation = "squeeze";
-            // this._snakeImage.hidden = true;
-            // console.log("squeeze", this._snakeImage.src);
+        if (this._prevY11 > 0 && y11 <= 0) {
+            this._snakeImage.style.animation = `squeeze ${(this._accCore.getPeriod() / 4000.0).toFixed(3)}s`;
+            console.log("squeeze", this._snakeImage.style.animation);
         }
-        if (this._prevY11 > 0 && y11 < 0) {
-            this._snakeImage.style.animation = "jump";
-            // this._snakeImage.hidden = false;
-            // console.log("jump", this._snakeImage.src);
+        if (this._prevY11 <= 0 && y11 > 0) {
+            this._snakeImage.style.animation = `jump ${(this._accCore.getPeriod() / 4000.0).toFixed(3)}s`;
+            console.log("jump", this._snakeImage.style.animation);
         }
         this._prevY11 = y11;
 
-        this._snakeDiv.style.top = this._screenZeroY + this._maxDeltaY * y11 + "px";
+        this._snakeDiv.style.top = (this._screenZeroY - this._maxDeltaY * y11) + "px";
     }
 }

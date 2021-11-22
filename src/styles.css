@@ -29,14 +29,9 @@
     top: 0;
     width: 256px;
     height: 256px;
-    /*
-    -webkit-transition: transform 0.05s;
-    transition: transform 0.05s;
-    */
 
     /*animation: squeeze 0.5s alternate infinite ease-in;*/
     animation-name: squeeze, jump;
-    animation-duration: 0.5s, 0.5s;
     animation-iteration-count: 1, 1;
 }
 
@@ -48,20 +43,6 @@
     0%   {transform: scale3d(1, 0.5, 1);}
     100% {transform: scale3d(1, 1, 1);}
 }
-
-/*
-#snake_img:hover{
-    -webkit-transform: scale3d(1, 0.5, 1);
-    transform: scale3d(1, 0.5, 1);
-}
-*/
-
-/*
-#snake_img.spring{
-    -webkit-transform: scale3d(1, 0.5, 1);
-    transform: scale3d(1, 0.5, 1);
-}
-*/
 
 .legend {
     position: absolute;

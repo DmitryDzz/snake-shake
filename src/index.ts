@@ -110,7 +110,7 @@ const startShaker = () => {
         document.getElementById("animation_div")! as HTMLDivElement,
         document.getElementById("snake_div")! as HTMLDivElement,
         document.getElementById("snake_img")! as HTMLImageElement,
-        256, 20);
+        256, 20, accCore);
 
     let startTimestamp: number | undefined = undefined;
 
