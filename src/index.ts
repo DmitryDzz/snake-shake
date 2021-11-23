@@ -4,7 +4,7 @@ import {AccCore} from "./acc_core";
 import NoSleep from "nosleep.js";
 import 'regenerator-runtime/runtime';
 
-let showChart: boolean = false;
+let chartLevel: number = 0;
 
 let textPeriod: HTMLDivElement | undefined = undefined;
 let accCore: AccCore | undefined = undefined;
@@ -27,9 +27,9 @@ const onStartButtonClickHandler = async () => {
             startButton.innerText = "Stop";
         accCore?.start();
         accSensor?.start();
-        if (chartCanvas && showChart)
+        if (chartCanvas && chartLevel > 0)
             chartCanvas.style.visibility = "visible";
-        if (showChart)
+        if (chartLevel > 0)
             chart?.start();
         await noSleep.enable();
     } else if (state === State.Started) {
@@ -57,10 +57,10 @@ const onVisibilityChangeHandler = async () => {
 
 const initialize = () => {
     const urlParams = new URLSearchParams(document.location.search);
-    showChart = urlParams.get("chart")?.toLowerCase() === "true" ?? false;
+    chartLevel = parseInt(urlParams.get("chart") ?? "0");
 
     chartCanvas = document.getElementById("chart_canvas") as HTMLCanvasElement;
-    textPeriod = document.getElementById("text_period") as HTMLDivElement;
+    textPeriod = document.getElementById("periodLegend") as HTMLDivElement;
 
     startButton = document.getElementById("start_button") as HTMLButtonElement;
     startButton!.removeEventListener("click", onStartButtonClickHandler);
@@ -93,15 +93,34 @@ const startShaker = () => {
             //strokeStyle: "black",
         }
     });
-    const accSeries = new TimeSeries();
-    const debugAccSeries = new TimeSeries();
-// const ticksSeries = new TimeSeries();
-    const periodSeries = new TimeSeries();
-    if (showChart) {
+
+    let accSeries: TimeSeries | undefined = undefined;
+    let periodSeries: TimeSeries | undefined = undefined;
+    let debugAccSeries: TimeSeries | undefined = undefined;
+    let ticksSeries: TimeSeries | undefined = undefined;
+
+    let currentChartLevel = 0;
+    if (chartLevel > currentChartLevel++) {
+        document.getElementById("accLegend")!.style.visibility = "visible";
+        accSeries = new TimeSeries();
         chart.addTimeSeries(accSeries, {lineWidth: 2, strokeStyle: "#00ffff"});
-        chart.addTimeSeries(debugAccSeries, {lineWidth: 2, strokeStyle: "#00dd00"});
-//    chart.addTimeSeries(ticksSeries, {lineWidth: 2, strokeStyle: "#ffff0080"})
+    }
+    if (chartLevel > currentChartLevel++) {
+        document.getElementById("periodLegend")!.style.visibility = "visible";
+        periodSeries = new TimeSeries();
         chart.addTimeSeries(periodSeries, {lineWidth: 2, strokeStyle: "#ffffff"});
+    }
+    if (chartLevel > currentChartLevel++) {
+        document.getElementById("debugAccLegend")!.style.visibility = "visible";
+        debugAccSeries = new TimeSeries();
+        chart.addTimeSeries(debugAccSeries, {lineWidth: 2, strokeStyle: "#00dd00"});
+    }
+    // if (chartLevel > currentChartLevel++) {
+    //     document.getElementById("ticksLegend")!.style.visibility = "visible";
+    //     ticksSeries = new TimeSeries();
+    //     chart.addTimeSeries(ticksSeries, {lineWidth: 2, strokeStyle: "#ffff0080"})
+    // }
+    if (chartLevel > 0) {
         chart.streamTo(chartCanvas!, 500);
     }
 
@@ -132,14 +151,12 @@ const startShaker = () => {
             //console.log("d:", new Date().getTime(), "ev:", ev.timeStamp, "s:", ts, "r:", startTimestamp + ts);
             accCore.update({t: ts, y: y});
 
-            if (showChart) {
-                accSeries.append(t, y);
-                debugAccSeries.append(t, accCore.getDebugAccY());
-                //ticksSeries.append(t-1, 0);
-                //ticksSeries.append(t, 1);
-                //ticksSeries.append(t+1, 0);
-                periodSeries.append(t, accCore.getPeriod() / 100);
-            }
+            accSeries?.append(t, y);
+            // ticksSeries?.append(t-1, 0);
+            // ticksSeries?.append(t, 1);
+            // ticksSeries?.append(t+1, 0);
+            periodSeries?.append(t, accCore.getPeriod() / 100);
+            debugAccSeries?.append(t, accCore.getDebugAccY());
         });
 
         // accSensor.start();
@@ -161,10 +178,11 @@ const drawFrame = (): void => {
     if (accCore !== undefined && box !== undefined && accCore.started) {
         const t = new Date().getTime();
 
-        if (textPeriod !== undefined) {
+        if (textPeriod?.style.visibility === "visible") {
             const periodInSeconds = accCore.getPeriod() / 1000;
             const periodLabelValue = periodInSeconds > 999 ? "INF" : periodInSeconds.toFixed(3);
-            textPeriod.innerText = `period: ${periodLabelValue} (s)`;
+            const frequencyLabelValue = periodInSeconds <= 0 || periodInSeconds > 999 ? "0" : (1 / periodInSeconds).toFixed(3);
+            textPeriod.innerText = `period: ${periodLabelValue} (s) ⇨ freq=${frequencyLabelValue} Hz`;
         }
 
         //console.log(t);

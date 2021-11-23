@@ -15,7 +15,6 @@
     position: absolute;
     min-width: 98vw;
     min-height: 98vh;
-    background: darkslategrey;
     z-index: 20;
 }
 
@@ -24,6 +23,7 @@
     width: 256px;
     height: 256px;
     z-index: 30;
+    visibility: hidden;
 }
 
 #snake_head_img {
@@ -86,55 +86,49 @@
     100% {opacity: 0;}
 }
 
-.legend {
-    position: absolute;
-    left: 20px;
-    top: 20px;
-    z-index: 40;
-}
-
 body {
     background-color: #2d2d2d;
 }
 
 div {
     font-family: "Arial", serif;
-    font-size: 24px;
+    font-size: 48px;
 }
 
-div.blue {
-    color: #0000ff;
-}
-
-div.cyan {
-    color: #00ffff;
-}
-
-div.green {
-    color: #00dd00;
-}
-
-div.red {
+div #error_message {
     color: red;
-}
-
-div.orange {
-    color: #ffff0080;
-}
-
-div.white {
-    color: #ffffff;
 }
 
 button {
     font-family: "Arial", serif;
-    font-size: 36px;
-    margin-top: 2ch;
+    font-size: 48px;
+    font-weight: bold;
     padding: 1ch 3ch;
-    color: cadetblue;
+    color: darkslategrey;
     border-radius: 2ch;
     position: absolute;
-    right: 3ch;
-    top: 3ch;
+    right: 2ch;
+    top: 2ch;
     z-index: 50;
+}
+
+.legend {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    z-index: 40;
+    visibility: hidden;
+}
+.legend #version {
+    color: #ffff00;
+    visibility: visible;
+}
+.legend #accLegend {
+    color: #00ffff;
+}
+.legend #periodLegend {
+    color: #00dd00;
+}
+.legend #debugAccLegend {
+    color: #dddddd;
 }

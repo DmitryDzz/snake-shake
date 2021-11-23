@@ -34,6 +34,7 @@ export class Box {
         snakeDiv.style.left = (parentDiv.offsetWidth - boxSize) / 2 + "px";
         // snakeDiv.style.left = (parentDiv.clientWidth - boxSize) / 2 + "px";
         snakeDiv.style.top = this._screenZeroY + "px";
+        snakeDiv.style.visibility = "visible";
     }
 
     private _prevY11?: number = undefined;
