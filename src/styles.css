@@ -117,18 +117,51 @@ button {
     left: 20px;
     top: 20px;
     z-index: 40;
-    visibility: hidden;
 }
 .legend #version {
     color: #ffff00;
-    visibility: visible;
+    display: block;
 }
 .legend #accLegend {
     color: #00ffff;
+    display: none;
 }
 .legend #periodLegend {
     color: #00dd00;
+    display: none;
 }
 .legend #debugAccLegend {
     color: #dddddd;
+    display: none;
+}
+.legend #mode {
+    color: #dddddd;
+    margin-top: 2ch;
+    display: block;
+}
+
+fieldset {
+    display: inline-grid;
+    line-height: 2.5;
+}
+label {
+    font-family: "Arial", serif;
+    font-size: 48px;
+    width: 14ch;
+}
+input[type=radio] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 50%;
+    width: 4ch;
+    height: 4ch;
+    border: 1ch solid #dddddd;
+    transition: 0.2s all linear;
+    margin-right: 2ch;
+    position: relative;
+}
+input:checked {
+    border: 1.5ch solid cyan;
+    outline: unset !important;
 }
