@@ -1,14 +1,15 @@
-import {ControlMode} from "./ControlMode";
+import {ControlMode, ControlModeState} from "./ControlMode";
 
 export class AutomaticControlMode extends ControlMode {
     async initialize(onErrorCallback: (message: string) => void) {
         await super.initialize(onErrorCallback);
+        this._state = ControlModeState.Stopped;
     }
 
-    async start() {
+    async activate() {
     }
 
-    async stop() {
+    async deactivate() {
     }
 
     getPosition11(): number {

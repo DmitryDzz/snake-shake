@@ -11,8 +11,8 @@ export abstract class ControlMode {
         this._errorHandler = onErrorCallback;
     }
 
-    abstract start(): Promise<void>;
-    abstract stop(): Promise<void>;
+    abstract activate(): Promise<void>;
+    abstract deactivate(): Promise<void>;
     abstract getPosition11(): number;
 
     protected _outputError = (message: string) => {

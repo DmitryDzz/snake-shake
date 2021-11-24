@@ -50,7 +50,20 @@ export class ShakeControlMode extends ControlMode {
         }
     }
 
-    async start() {
+    async activate() {
+        if (this._startButton) {
+            this._startButton.style.visibility = "visible";
+        }
+    }
+
+    async deactivate() {
+        if (this._startButton) {
+            this._startButton.style.visibility = "hidden";
+        }
+        await this._stop();
+    }
+
+    private async _start() {
         this._state = ControlModeState.Started;
         if (this._startButton) {
             this._startButton.innerText = "Stop";
@@ -64,11 +77,10 @@ export class ShakeControlMode extends ControlMode {
         await this._noSleep?.enable();
     }
 
-    async stop() {
+    private async _stop() {
         this._state = ControlModeState.Stopped;
         if (this._startButton) {
             this._startButton.innerText = "Start";
-            this._startButton.style.visibility = "visible";
         }
         this._accCore?.stop();
         this._accSensor?.stop();
@@ -92,7 +104,7 @@ export class ShakeControlMode extends ControlMode {
         return 0;
     }
 
-    private readonly _onVisibilityChangeHandler = async () => {
+    private readonly _onPageVisibilityChangeHandler = async () => {
         if (document.visibilityState === "visible") {
             if (this._state === ControlModeState.Started)
                 await this._noSleep?.enable();
@@ -105,8 +117,8 @@ export class ShakeControlMode extends ControlMode {
     private _initializeNoSleep() {
         this._noSleep?.disable();
         this._noSleep = new NoSleep();
-        document.removeEventListener("visibilitychange", this._onVisibilityChangeHandler);
-        document.addEventListener("visibilitychange", this._onVisibilityChangeHandler);
+        document.removeEventListener("visibilitychange", this._onPageVisibilityChangeHandler);
+        document.addEventListener("visibilitychange", this._onPageVisibilityChangeHandler);
     }
 
     private _initializeChart() {
@@ -219,9 +231,9 @@ export class ShakeControlMode extends ControlMode {
 
     private readonly _onStartButtonClickHandler = async () => {
         if (this._state === ControlModeState.Stopped) {
-            await this.start();
+            await this._start();
         } else if (this._state === ControlModeState.Started) {
-            await this.stop();
+            await this._stop();
         }
     }
 }

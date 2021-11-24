@@ -110,6 +110,7 @@ button {
     right: 2ch;
     top: 2ch;
     z-index: 50;
+    visibility: hidden;
 }
 
 .legend {

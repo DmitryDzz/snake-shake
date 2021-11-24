@@ -8,18 +8,14 @@ import {ControlMode} from "./control-modes/ControlMode";
 const manualControlMode: ControlMode = new ManualControlMode();
 const automaticControlMode: ControlMode = new AutomaticControlMode();
 const shakeControlMode: ControlMode = new ShakeControlMode();
-
-let previousControlMode: ControlMode = manualControlMode;
 let currentControlMode: ControlMode = manualControlMode;
 
 let box: Box | undefined = undefined;
 
 const onClickModeHandler = async (event: any) => {
-    if (previousControlMode === currentControlMode) return;
-
-    await manualControlMode.stop();
-    await automaticControlMode.stop();
-    await shakeControlMode.stop();
+    await manualControlMode.deactivate();
+    await automaticControlMode.deactivate();
+    await shakeControlMode.deactivate();
 
     switch (event.target.value) {
         case "automatic":
@@ -32,9 +28,11 @@ const onClickModeHandler = async (event: any) => {
             currentControlMode = manualControlMode;
             break;
     }
+
+    await currentControlMode.activate();
 }
 
-const initializeCommon = () => {
+const initialize = () => {
     document.querySelectorAll("input[name='mode_switch']").forEach((input: Element) => {
         input.removeEventListener("click", onClickModeHandler);
         input.addEventListener("click", onClickModeHandler);
@@ -71,7 +69,7 @@ const outputErrorHandler = (message: string) => {
     const versionElement: HTMLDivElement = document.getElementById("version") as HTMLDivElement;
     versionElement.textContent = `version: ${process.env.npm_package_version}`;
 
-    initializeCommon();
+    initialize();
     (async () => {
         await manualControlMode.initialize(outputErrorHandler);
         await automaticControlMode.initialize(outputErrorHandler);

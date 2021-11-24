@@ -1,14 +1,15 @@
-import {ControlMode} from "./ControlMode";
+import {ControlMode, ControlModeState} from "./ControlMode";
 
 export class ManualControlMode extends ControlMode {
     async initialize(onErrorCallback: (message: string) => void) {
         await super.initialize(onErrorCallback);
+        this._state = ControlModeState.Started;
     }
 
-    async start() {
+    async activate() {
     }
 
-    async stop() {
+    async deactivate() {
     }
 
     getPosition11(): number {
