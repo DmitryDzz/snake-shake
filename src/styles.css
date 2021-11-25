@@ -33,9 +33,7 @@
     width: 256px;
     height: 256px;
     z-index: 33;
-    animation-iteration-count: 1, 1;
 }
-
 #snake_body_img {
     position: absolute;
     left: 0;
@@ -43,9 +41,7 @@
     width: 256px;
     height: 256px;
     z-index: 32;
-    animation-iteration-count: 1, 1;
 }
-
 #snake_tongue_img {
     position: absolute;
     left: 0;
@@ -54,36 +50,6 @@
     height: 256px;
     opacity: 0;
     z-index: 31;
-    animation-iteration-count: 1, 1;
-}
-
-@keyframes head_squeeze {
-    0%   {transform: translateY(0);}
-    100% {transform: translateY(32px);}
-}
-@keyframes head_jump {
-    0%   {transform: translateY(32px);}
-    100% {transform: translateY(0);}
-}
-@keyframes body_squeeze {
-    0%   {transform: scale3d(1, 1, 1);}
-    100% {transform: scale3d(1, 0.5, 1);}
-}
-@keyframes body_jump {
-    0%   {transform: scale3d(1, 0.5, 1);}
-    100% {transform: scale3d(1, 1, 1);}
-}
-/*Проявиться*/
-@keyframes fadein {
-    0%   {opacity: 0;}
-    50% {opacity: 1;}
-    100% {opacity: 1;}
-}
-/*Растаять*/
-@keyframes fadeout {
-    0%   {opacity: 1;}
-    50% {opacity: 1;}
-    100% {opacity: 0;}
 }
 
 body {
@@ -107,10 +73,35 @@ button {
     color: darkslategrey;
     border-radius: 2ch;
     position: absolute;
-    right: 2ch;
-    top: 2ch;
+    left: 2ch;
+    bottom: 2ch;
     z-index: 50;
     visibility: hidden;
+}
+
+#move_div {
+    font-family: "Arial", serif;
+    font-size: 48px;
+    font-weight: bold;
+    background: #dc2b00;
+    color: #dddddd;
+    border-radius: 50%;
+    position: absolute;
+    right: 2ch;
+    top: 2ch;
+    width: 8ch;
+    height: 8ch;
+    z-index: 50;
+
+    text-align: center;
+    vertical-align: middle;
+    line-height: 8ch;
+    /*visibility: hidden;*/
+
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
 }
 
 .legend {

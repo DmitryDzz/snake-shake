@@ -1,3 +1,6 @@
+import {gsap as ggg} from "gsap";
+import Timeline = gsap.core.Timeline;
+
 export class Box {
     private readonly _snakeDiv: HTMLDivElement;
     private readonly _snakeHeadImage: HTMLImageElement;
@@ -6,6 +9,7 @@ export class Box {
     // private readonly _accCore: AccCore;
     private readonly _screenZeroY: number;
     private readonly _maxDeltaY: number;
+    private readonly _animation: Timeline;
 
     constructor(parentDiv: HTMLDivElement,
                 snakeDiv: HTMLDivElement,
@@ -33,34 +37,27 @@ export class Box {
         // snakeDiv.style.left = (parentDiv.clientWidth - boxSize) / 2 + "px";
         snakeDiv.style.top = this._screenZeroY + "px";
         snakeDiv.style.visibility = "visible";
-    }
 
-    // private _prevY11?: number = undefined;
-    // private _prevDeltaY11?: number = undefined;
+        // gsap.to("#snake_head_img", {duration: 1, y: 100});
+        this._animation = ggg.timeline()
+            .to("#snake_head_img", {duration: 1, y: 32}, 0)
+            .to("#snake_body_img", {duration: 1, scaleY: 0.5}, 0)
+            .to("#snake_tongue_img", {duration: 1, opacity: 1}, 0)
+            .pause();
+    }
 
     /**
      * y11 - value in interval [-1..1].
      **/
     setPosition11(y11: number) {
-        // if (this._prevY11 !== undefined) {
-        //     if (this._prevY11 > 0 && y11 <= 0) {
-        //         const duration = (this._accCore.getPeriod() / 4000.0).toFixed(3);
-        //         this._snakeHeadImage.style.animation = `head_squeeze ${duration}s`;
-        //         this._snakeBodyImage.style.animation = `body_squeeze ${duration}s`;
-        //         this._snakeTongueImage.style.animation = `fadein ${duration}s`;
-        //     }
-        //     const deltaY11 = y11 - this._prevY11;
-        //     if (this._prevDeltaY11 !== undefined) {
-        //         if (this._prevDeltaY11 < 0 && deltaY11 >= 0) {
-        //             const duration = (this._accCore.getPeriod() / 4000.0).toFixed(3);
-        //             this._snakeHeadImage.style.animation = `head_jump ${duration}s`;
-        //             this._snakeBodyImage.style.animation = `body_jump ${duration}s`;
-        //             this._snakeTongueImage.style.animation = `fadeout ${duration}s`;
-        //         }
-        //     }
-        //     this._prevDeltaY11 = deltaY11;
-        // }
-        // this._prevY11 = y11;
+        if (y11 < -0.5) {
+            // y11=-0.5 => 0
+            // y11=-1.0 => 1
+            this._animation.progress(-(y11 + 0.5) * 2);
+        } else {
+            this._animation.progress(0);
+        }
+        //this._animation.progress(1);
 
         this._snakeDiv.style.top = (this._screenZeroY - this._maxDeltaY * y11) + "px";
     }
