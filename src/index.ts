@@ -1,5 +1,5 @@
 import 'regenerator-runtime/runtime';
-import {Snake} from "./snake";
+import {Snake} from "./Snake";
 import {ManualControlMode} from "./control-modes/ManualControlMode";
 import {AutomaticControlMode} from "./control-modes/AutomaticControlMode";
 import {ShakeControlMode} from "./control-modes/ShakeControlMode";
@@ -10,7 +10,7 @@ const automaticControlMode: ControlMode = new AutomaticControlMode();
 const shakeControlMode: ControlMode = new ShakeControlMode();
 let currentControlMode: ControlMode = manualControlMode;
 
-let box: Snake | undefined = undefined;
+let snake: Snake | undefined = undefined;
 
 const onClickModeHandler = async (event: any) => {
     let newControlMode: ControlMode;
@@ -41,7 +41,7 @@ const initialize = () => {
         input.addEventListener("click", onClickModeHandler);
     });
 
-    box = new Snake(
+    snake = new Snake(
         // document.getElementById("animation_div")! as HTMLDivElement,
         document.getElementById("container_div")! as HTMLDivElement,
         document.getElementById("snake_div")! as HTMLDivElement,
@@ -54,8 +54,8 @@ const initialize = () => {
 const drawFrame = (t: DOMHighResTimeStamp): void => {
     //TODO DZZ Используй t!
     const position11: number = currentControlMode.getPosition11();
-    box?.setPosition11(position11);
-    box?.update();
+    snake?.setPosition11(position11);
+    snake?.update();
     requestAnimationFrame(drawFrame);
 }
 

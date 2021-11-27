@@ -7,7 +7,7 @@ export class Snake {
     private readonly _snakeHeadImage: HTMLImageElement;
     private readonly _snakeBodyImage: HTMLImageElement;
     private readonly _snakeTongueImage: HTMLImageElement;
-    private readonly _boxSize: number;
+    private readonly _snakeSize: number;
     private readonly _padding: number;
     private _screenZeroY: number = 0;
     private _maxDeltaY: number = 0;
@@ -15,7 +15,7 @@ export class Snake {
 
     private _targetPosition11: number = 0;
     private _actualPosition11: number = 0;
-    private readonly MAX_SPEED_11: number = 4.0 / 1000.0; // Full amplitude (-1..+1 = 2.0) per millisecond.
+    private readonly MAX_SPEED_11: number = 10.0 / 1000.0; // Full amplitude (-1..+1 = 2.0) per millisecond.
     private _time: number | undefined = undefined;
 
     constructor(parentDiv: HTMLDivElement,
@@ -23,21 +23,21 @@ export class Snake {
                 snakeHeadImage: HTMLImageElement,
                 snakeBodyImage: HTMLImageElement,
                 snakeTongueImage: HTMLImageElement,
-                boxSize: number, padding: number) {
+                snakeSize: number, padding: number) {
         this._parentDiv = parentDiv;
         this._snakeDiv = snakeDiv;
         this._snakeHeadImage = snakeHeadImage;
         this._snakeBodyImage = snakeBodyImage;
         this._snakeTongueImage = snakeTongueImage;
-        this._boxSize = boxSize;
+        this._snakeSize = snakeSize;
         this._padding = padding;
 
         window.removeEventListener('resize', this._resizeHandler);
         window.addEventListener('resize', this._resizeHandler);
         this._resizeHandler();
 
-        snakeDiv.style.left = (parentDiv.offsetWidth - boxSize) / 2 + "px";
-        // snakeDiv.style.left = (parentDiv.clientWidth - boxSize) / 2 + "px";
+        snakeDiv.style.left = (parentDiv.offsetWidth - snakeSize) / 2 + "px";
+        // snakeDiv.style.left = (parentDiv.clientWidth - snakeSize) / 2 + "px";
         snakeDiv.style.top = this._screenZeroY + "px";
         snakeDiv.style.visibility = "visible";
 
@@ -94,9 +94,9 @@ export class Snake {
     private readonly _resizeHandler = () => {
         const minY = this._padding;
         const screenHeight = this._parentDiv.offsetHeight;
-        const maxY = screenHeight - this._padding - this._boxSize;
+        const maxY = screenHeight - this._padding - this._snakeSize;
         this._maxDeltaY = (maxY - minY) / 2;
         this._screenZeroY = this._padding + this._maxDeltaY;
-        this._snakeDiv.style.left = (this._parentDiv.offsetWidth - this._boxSize) / 2 + "px";
+        this._snakeDiv.style.left = (this._parentDiv.offsetWidth - this._snakeSize) / 2 + "px";
     }
 }

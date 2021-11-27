@@ -1,10 +1,11 @@
-import { AccCore, Options } from "../acc_core";
+import { AccCore, Options } from "../AccCore";
 
 describe("Period measurement", () => {
     const options: Options = {
         minAccAmplitude: 0,
         maxPeriod: 3000,
         periodSpeed: 1000000,
+        autoStart: true,
     };
 
     it("Test 1", () => {

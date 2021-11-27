@@ -1,7 +1,7 @@
 import {ControlMode, ControlModeState, ControlModeType} from "./ControlMode";
 import NoSleep from "nosleep.js";
 import {SmoothieChart, TimeSeries} from "smoothie";
-import {AccCore} from "../acc_core";
+import {AccCore} from "../AccCore";
 
 export class ShakeControlMode extends ControlMode {
     private _noSleep: NoSleep | undefined = undefined;

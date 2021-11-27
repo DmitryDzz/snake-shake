@@ -35,6 +35,7 @@ export class ManualControlMode extends ControlMode {
 
     async activate() {
         if (this._moveDiv) {
+            this._resizeHandler();
             this._moveDiv.style.top = this._screenZeroY + "px";
             this._moveDiv.style.visibility = "visible";
             this._removeListeners();

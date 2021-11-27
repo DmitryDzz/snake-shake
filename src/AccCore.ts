@@ -104,7 +104,7 @@ export class AccCore {
         // return Math.sin(AccCore.TWO_PI * t / this._period);
 
         if (this._stopped || this._period === undefined) return 0.0;
-        if (this._t0 === undefined) this._t0 = new Date().getTime();
+        if (this._t0 === undefined) this._t0 = t;
 
         if (this._prevPeriod === undefined) {
             this._phase = 0.0;
