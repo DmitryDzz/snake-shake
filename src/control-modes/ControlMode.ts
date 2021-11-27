@@ -8,7 +8,7 @@ export abstract class ControlMode {
     private _errorHandler: ErrorCallback | undefined = undefined;
 
     protected _state: ControlModeState = ControlModeState.Uninitialized;
-    protected readonly _mode: ControlModeType;
+    protected _mode: ControlModeType;
 
     protected constructor(mode: ControlModeType) {
         this._mode = mode;

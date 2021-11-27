@@ -1,11 +1,9 @@
-import {ControlMode, ControlModeState, ControlModeType} from "./ControlMode";
-import NoSleep from "nosleep.js";
+import {ControlModeState, ControlModeType} from "./ControlMode";
 import {SmoothieChart, TimeSeries} from "smoothie";
 import {AccCore} from "../AccCore";
+import {BaseAutoControlMode} from "./BaseAutoControlMode";
 
-export class ShakeControlMode extends ControlMode {
-    private _noSleep: NoSleep | undefined = undefined;
-
+export class ShakeControlMode extends BaseAutoControlMode {
     private _chartLevel: number = 0;
     private _chart: SmoothieChart | undefined = undefined;
     private _chartCanvasElement: HTMLCanvasElement | undefined = undefined;
@@ -20,7 +18,6 @@ export class ShakeControlMode extends ControlMode {
     private _accCore: AccCore | undefined = undefined;
     private _accSensor: LinearAccelerationSensor | undefined = undefined;
 
-    private _startButton: HTMLButtonElement | undefined = undefined;
     private _textPeriodElement: HTMLDivElement | undefined = undefined;
 
     constructor() {
@@ -56,23 +53,16 @@ export class ShakeControlMode extends ControlMode {
     }
 
     async activate() {
-        if (this._startButton) {
-            this._startButton.style.visibility = "visible";
-        }
+        await super.activate();
     }
 
     async deactivate() {
-        if (this._startButton) {
-            this._startButton.style.visibility = "hidden";
-        }
-        await this._stop();
+        await super.deactivate();
     }
 
-    private async _start() {
-        this._state = ControlModeState.Started;
-        if (this._startButton) {
-            this._startButton.innerText = "Stop";
-        }
+    protected async _start() {
+        await super._start();
+
         this._accCore?.start();
         this._accSensor?.start();
         if (this._chartCanvasElement && this._chartLevel > 0)
@@ -81,21 +71,17 @@ export class ShakeControlMode extends ControlMode {
             this._activateChartLabels();
             this._chart?.start();
         }
-        await this.enableNoSleepAsync();
     }
 
-    private async _stop() {
-        this._state = ControlModeState.Stopped;
-        if (this._startButton) {
-            this._startButton.innerText = "Start";
-        }
+    protected async _stop() {
+        await super._stop();
+
         this._accCore?.stop();
         this._accSensor?.stop();
         if (this._chartCanvasElement)
             this._chartCanvasElement.style.visibility = "hidden";
         this._chart?.stop();
         this._deactivateChartLabels();
-        this.disableNoSleep();
     }
 
     getPosition11(time: number): number {
@@ -109,23 +95,6 @@ export class ShakeControlMode extends ControlMode {
             return this._accCore.getPosition11(time);
         }
         return 0;
-    }
-
-    private readonly _onPageVisibilityChangeHandler = async () => {
-        if (document.visibilityState === "visible") {
-            if (this._state === ControlModeState.Started)
-                await this.enableNoSleepAsync();
-        } else if (document.visibilityState === "hidden") {
-            if (this._state === ControlModeState.Started)
-                this.disableNoSleep();
-        }
-    };
-
-    private _initializeNoSleep() {
-        this.disableNoSleep();
-        this._noSleep = new NoSleep();
-        document.removeEventListener("visibilitychange", this._onPageVisibilityChangeHandler);
-        document.addEventListener("visibilitychange", this._onPageVisibilityChangeHandler);
     }
 
     private _activateChartLabels() {
@@ -245,43 +214,13 @@ export class ShakeControlMode extends ControlMode {
         }
     }
 
-    private _initializeHtmlElements() {
-        this._startButton = document.getElementById("start_button") as HTMLButtonElement;
-        this._startButton.removeEventListener("click", this._onStartButtonClickHandler);
-        this._startButton.addEventListener("click", this._onStartButtonClickHandler);
-        this._startButton.style.visibility = "hidden";
-
+    protected _initializeHtmlElements() {
+        super._initializeHtmlElements();
         this._textPeriodElement = document.getElementById("periodLegend") as HTMLDivElement;
-    }
-
-    private async enableNoSleepAsync() {
-        if (this._noSleep) {
-            await this._noSleep.enable();
-            // console.log("NoSleep enabled");
-        }
-    }
-
-    private disableNoSleep() {
-        if (this._noSleep) {
-            this._noSleep.disable();
-            // console.log("NoSleep disabled");
-        }
-    }
-
-    private readonly _onStartButtonClickHandler = async () => {
-        if (this._state === ControlModeState.Stopped) {
-            await this._start();
-        } else if (this._state === ControlModeState.Started) {
-            await this._stop();
-        }
     }
 
     private readonly _resizeHandler = () => {
         if (this._chartCanvasElement) {
-            // this._chartCanvasElement.style.width = window.innerWidth + "px";
-            // this._chartCanvasElement.style.height = window.innerHeight + "px";
-            // this._chartCanvasElement.width = window.innerWidth / 4;
-            // this._chartCanvasElement.height = window.innerHeight / 4;
             this._chartCanvasElement.width = window.innerWidth;
             this._chartCanvasElement.height = window.innerHeight;
         }
