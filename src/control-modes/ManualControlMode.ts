@@ -1,4 +1,10 @@
-import {ControlMode, ControlModeState} from "./ControlMode";
+import {ControlMode, ControlModeState, ControlModeType} from "./ControlMode";
+
+interface PointerData {
+    pointerId: number;
+    pointerStartY: number;
+    buttonStartY: number;
+}
 
 export class ManualControlMode extends ControlMode {
     private _moveDiv: HTMLDivElement | undefined = undefined;
@@ -7,10 +13,12 @@ export class ManualControlMode extends ControlMode {
     private _minY!: number;
     private _maxY!: number;
 
-    private _mouseStartY: number | undefined = undefined;
-    private _buttonStartY: number | undefined = undefined;
-
+    private _pointerData: PointerData | undefined = undefined;
     private _position11: number = 0;
+
+    constructor() {
+        super(ControlModeType.Manual);
+    }
 
     async initialize(onErrorCallback: (message: string) => void) {
         await super.initialize(onErrorCallback);
@@ -28,48 +36,62 @@ export class ManualControlMode extends ControlMode {
         this._screenZeroY = padding + this._maxDeltaY;
         this._moveDiv.style.top = this._screenZeroY + "px";
         this._moveDiv.style.visibility = "visible";
-
-        this._moveDiv.removeEventListener("mousedown", this._mouseDownHandler);
-        this._moveDiv.addEventListener("mousedown", this._mouseDownHandler);
-        this._moveDiv.removeEventListener("mouseup", this._mouseUpHandler);
-        this._moveDiv.addEventListener("mouseup", this._mouseUpHandler);
-        this._moveDiv.removeEventListener("mousemove", this._mouseMoveHandler);
-        this._moveDiv.addEventListener("mousemove", this._mouseMoveHandler);
-        document.removeEventListener("mouseleave", this._mouseLeaveHandler);
-        document.addEventListener("mouseleave", this._mouseLeaveHandler);
     }
 
     async activate() {
         if (this._moveDiv) {
             this._moveDiv.style.top = this._screenZeroY + "px";
             this._moveDiv.style.visibility = "visible";
+            this._removeListeners();
+            this._addListeners();
         }
     }
 
     async deactivate() {
-        if (this._moveDiv)
+        if (this._moveDiv) {
             this._moveDiv.style.visibility = "hidden";
+            this._removeListeners();
+        }
     }
 
     getPosition11(): number {
         return this._position11;
     }
 
-    private _mouseDownHandler = (ev: any) => {
+    private _addListeners() {
+        this._moveDiv!.addEventListener("pointerdown", this._pointerDownHandler);
+        document.addEventListener("pointerup", this._pointerUpHandler);
+        document.addEventListener("pointermove", this._pointerMoveHandler);
+        document.addEventListener("pointerleave", this._pointerLeaveHandler);
+    }
+
+    private _removeListeners() {
+        this._moveDiv!.removeEventListener("pointerdown", this._pointerDownHandler);
+        document.removeEventListener("pointerup", this._pointerUpHandler);
+        document.removeEventListener("pointermove", this._pointerMoveHandler);
+        document.removeEventListener("pointerleave", this._pointerLeaveHandler);
+    }
+
+    private _pointerDownHandler = (ev: any) => {
+        if (this._pointerData) return;
         const rect = ev.target.getBoundingClientRect();
-        this._buttonStartY = rect.top;
-        this._mouseStartY = ev.clientY;
+        this._pointerData = {
+            pointerId: ev.pointerId,
+            pointerStartY: ev.clientY,
+            buttonStartY: rect.top,
+        }
     }
 
-    private _mouseUpHandler = (ev: any) => {
-        this._mouseStartY = undefined;
-        this._buttonStartY = undefined;
+    private _pointerUpHandler = (ev: any) => {
+        if (this._pointerData && ev.pointerId === this._pointerData.pointerId) {
+            this._pointerData = undefined;
+        }
     }
 
-    private _mouseMoveHandler = (ev: any) => {
-        if (this._mouseStartY && this._buttonStartY && this._moveDiv) {
-            const deltaY = ev.clientY - this._mouseStartY;
-            let top = this._buttonStartY + deltaY;
+    private _pointerMoveHandler = (ev: any) => {
+        if (this._moveDiv && this._pointerData && ev.pointerId === this._pointerData.pointerId) {
+            const deltaY = ev.clientY - this._pointerData.pointerStartY;
+            let top = this._pointerData.buttonStartY + deltaY;
             if (top > this._maxY)
                 top = this._maxY;
             else if (top < this._minY)
@@ -78,14 +100,12 @@ export class ManualControlMode extends ControlMode {
             this._position11 = -(top - this._screenZeroY) / this._maxDeltaY;
 
             this._moveDiv.style.top = top + "px";
-        } else {
-            this._mouseStartY = undefined;
-            this._buttonStartY = undefined;
         }
     }
 
-    private _mouseLeaveHandler = () => {
-        this._mouseStartY = undefined;
-        this._buttonStartY = undefined;
+    private _pointerLeaveHandler = (ev: any) => {
+        if (this._pointerData && ev.pointerId === this._pointerData.pointerId) {
+            this._pointerData = undefined;
+        }
     }
 }

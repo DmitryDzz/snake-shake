@@ -1,4 +1,4 @@
-import {ControlMode, ControlModeState} from "./ControlMode";
+import {ControlMode, ControlModeState, ControlModeType} from "./ControlMode";
 import NoSleep from "nosleep.js";
 import {SmoothieChart, TimeSeries} from "smoothie";
 import {AccCore} from "../acc_core";
@@ -21,6 +21,10 @@ export class ShakeControlMode extends ControlMode {
 
     private _startButton: HTMLButtonElement | undefined = undefined;
     private _textPeriodElement: HTMLDivElement | undefined = undefined;
+
+    constructor() {
+        super(ControlModeType.Shake);
+    }
 
     async initialize(onErrorCallback: (message: string) => void) {
         await super.initialize(onErrorCallback);
@@ -74,7 +78,7 @@ export class ShakeControlMode extends ControlMode {
             this._chartCanvasElement.style.visibility = "visible";
         if (this._chartLevel > 0)
             this._chart?.start();
-        await this._noSleep?.enable();
+        await this.enableNoSleepAsync();
     }
 
     private async _stop() {
@@ -87,7 +91,7 @@ export class ShakeControlMode extends ControlMode {
         if (this._chartCanvasElement)
             this._chartCanvasElement.style.visibility = "hidden";
         this._chart?.stop();
-        await this._noSleep?.disable();
+        this.disableNoSleep();
     }
 
     getPosition11(): number {
@@ -107,15 +111,15 @@ export class ShakeControlMode extends ControlMode {
     private readonly _onPageVisibilityChangeHandler = async () => {
         if (document.visibilityState === "visible") {
             if (this._state === ControlModeState.Started)
-                await this._noSleep?.enable();
+                await this.enableNoSleepAsync();
         } else if (document.visibilityState === "hidden") {
             if (this._state === ControlModeState.Started)
-                await this._noSleep?.disable();
+                this.disableNoSleep();
         }
     };
 
     private _initializeNoSleep() {
-        this._noSleep?.disable();
+        this.disableNoSleep();
         this._noSleep = new NoSleep();
         document.removeEventListener("visibilitychange", this._onPageVisibilityChangeHandler);
         document.addEventListener("visibilitychange", this._onPageVisibilityChangeHandler);
@@ -227,6 +231,20 @@ export class ShakeControlMode extends ControlMode {
         this._startButton.style.visibility = "hidden";
 
         this._textPeriodElement = document.getElementById("periodLegend") as HTMLDivElement;
+    }
+
+    private async enableNoSleepAsync() {
+        if (this._noSleep) {
+            await this._noSleep.enable();
+            console.log("NoSleep enabled");
+        }
+    }
+
+    private disableNoSleep() {
+        if (this._noSleep) {
+            this._noSleep.disable();
+            console.log("NoSleep disabled");
+        }
     }
 
     private readonly _onStartButtonClickHandler = async () => {

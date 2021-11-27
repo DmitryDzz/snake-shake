@@ -3,7 +3,7 @@ import {Box} from "./box";
 import {ManualControlMode} from "./control-modes/ManualControlMode";
 import {AutomaticControlMode} from "./control-modes/AutomaticControlMode";
 import {ShakeControlMode} from "./control-modes/ShakeControlMode";
-import {ControlMode} from "./control-modes/ControlMode";
+import {ControlMode, ControlModeType} from "./control-modes/ControlMode";
 
 const manualControlMode: ControlMode = new ManualControlMode();
 const automaticControlMode: ControlMode = new AutomaticControlMode();
@@ -13,23 +13,26 @@ let currentControlMode: ControlMode = manualControlMode;
 let box: Box | undefined = undefined;
 
 const onClickModeHandler = async (event: any) => {
-    await manualControlMode.deactivate();
-    await automaticControlMode.deactivate();
-    await shakeControlMode.deactivate();
-
+    let newControlMode: ControlMode;
     switch (event.target.value) {
         case "automatic":
-            currentControlMode = automaticControlMode;
+            newControlMode = automaticControlMode;
             break;
         case "shake":
-            currentControlMode = shakeControlMode;
+            newControlMode = shakeControlMode;
             break;
         default:
-            currentControlMode = manualControlMode;
+            newControlMode = manualControlMode;
             break;
     }
 
-    await currentControlMode.activate();
+    if (newControlMode.mode !== currentControlMode.mode) {
+        currentControlMode = newControlMode;
+        await manualControlMode.deactivate();
+        await automaticControlMode.deactivate();
+        await shakeControlMode.deactivate();
+        await currentControlMode.activate();
+    }
 }
 
 const initialize = () => {
@@ -50,6 +53,7 @@ const initialize = () => {
 const drawFrame = (): void => {
     const position11: number = currentControlMode.getPosition11();
     box?.setPosition11(position11);
+    box?.update();
     requestAnimationFrame(drawFrame);
 }
 
@@ -74,5 +78,8 @@ const outputErrorHandler = (message: string) => {
         await manualControlMode.initialize(outputErrorHandler);
         await automaticControlMode.initialize(outputErrorHandler);
         await shakeControlMode.initialize(outputErrorHandler);
+
+        currentControlMode = manualControlMode;
+        await currentControlMode.activate();
     })();
 })();
