@@ -142,7 +142,7 @@ export class ShakeControlMode extends ControlMode {
                     fontSize: 32
                 },
                 grid: {
-                    fillStyle: "#788ea1",
+                    fillStyle: "#2d2d2d",
                     //millisPerLine: 100, <-- doesn't work
                     verticalSections: 40,
                     //lineWidth: 0.1,
@@ -156,17 +156,17 @@ export class ShakeControlMode extends ControlMode {
         if (this._chartLevel > currentChartLevel++) {
             document.getElementById("accLegend")!.style.display = "block";
             this._accSeries = new TimeSeries();
-            this._chart?.addTimeSeries(this._accSeries, {lineWidth: 2, strokeStyle: "#00ffff"});
+            this._chart?.addTimeSeries(this._accSeries, {lineWidth: 2, strokeStyle: "#f36400"});
         }
         if (this._chartLevel > currentChartLevel++) {
             document.getElementById("periodLegend")!.style.display = "block";
             this._periodSeries = new TimeSeries();
-            this._chart?.addTimeSeries(this._periodSeries, {lineWidth: 2, strokeStyle: "#ffffff"});
+            this._chart?.addTimeSeries(this._periodSeries, {lineWidth: 2, strokeStyle: "#009051"});
         }
         if (this._chartLevel > currentChartLevel++) {
             document.getElementById("debugAccLegend")!.style.display = "block";
             this._debugAccSeries = new TimeSeries();
-            this._chart?.addTimeSeries(this._debugAccSeries, {lineWidth: 2, strokeStyle: "#00dd00"});
+            this._chart?.addTimeSeries(this._debugAccSeries, {lineWidth: 2, strokeStyle: "#cbc08e"});
         }
         // if (this._chartLevel > currentChartLevel++) {
         //     document.getElementById("ticksLegend")!.style.display = "block";
@@ -236,14 +236,14 @@ export class ShakeControlMode extends ControlMode {
     private async enableNoSleepAsync() {
         if (this._noSleep) {
             await this._noSleep.enable();
-            console.log("NoSleep enabled");
+            // console.log("NoSleep enabled");
         }
     }
 
     private disableNoSleep() {
         if (this._noSleep) {
             this._noSleep.disable();
-            console.log("NoSleep disabled");
+            // console.log("NoSleep disabled");
         }
     }
 

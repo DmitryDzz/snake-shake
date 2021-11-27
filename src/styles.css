@@ -33,6 +33,7 @@
     width: 256px;
     height: 256px;
     z-index: 33;
+    filter: drop-shadow( 8px 8px 8px rgba(0, 0, 0, .7));
 }
 #snake_body_img {
     position: absolute;
@@ -41,6 +42,7 @@
     width: 256px;
     height: 256px;
     z-index: 32;
+    filter: drop-shadow( 8px 8px 8px rgba(0, 0, 0, .7));
 }
 #snake_tongue_img {
     position: absolute;
@@ -50,6 +52,7 @@
     height: 256px;
     opacity: 0;
     z-index: 31;
+    filter: drop-shadow( 8px 8px 8px rgba(0, 0, 0, .7));
 }
 
 body {
@@ -57,7 +60,7 @@ body {
 }
 
 div {
-    font-family: "Arial", serif;
+    font-family: "Roboto", sans-serif;
     font-size: 48px;
 }
 
@@ -66,26 +69,31 @@ div #error_message {
 }
 
 button {
-    font-family: "Arial", serif;
+    font-family: "Roboto", sans-serif;
     font-size: 48px;
-    font-weight: bold;
-    padding: 1ch 3ch;
-    color: darkslategrey;
-    border-radius: 2ch;
-    position: absolute;
+    text-transform: uppercase;
+    background: #dc2b00;
+    color: #cbc08e;
+    border-radius: 50%;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.7);
+    border: none;
+    position: relative;
     left: 2ch;
-    bottom: 2ch;
+    top: 2ch;
+    width: 8ch;
+    height: 8ch;
     z-index: 50;
     visibility: hidden;
 }
 
 #move_div {
-    font-family: "Arial", serif;
+    font-family: "Roboto", sans-serif;
     font-size: 48px;
-    font-weight: bold;
+    text-transform: uppercase;
     background: #dc2b00;
-    color: #dddddd;
+    color: #cbc08e;
     border-radius: 50%;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.7);
     position: absolute;
     right: 2ch;
     top: 2ch;
@@ -96,7 +104,7 @@ button {
     text-align: center;
     vertical-align: middle;
     line-height: 8ch;
-    /*visibility: hidden;*/
+    visibility: hidden;
 
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */
@@ -117,15 +125,15 @@ button {
     display: block;
 }
 .legend #accLegend {
-    color: #00ffff;
+    color: #fe6400;
     display: none;
 }
 .legend #periodLegend {
-    color: #00dd00;
+    color: #009051;
     display: none;
 }
 .legend #debugAccLegend {
-    color: #dddddd;
+    color: #cbc08e;
     display: none;
 }
 .legend #mode {
@@ -137,25 +145,28 @@ button {
 fieldset {
     display: inline-grid;
     line-height: 2.5;
+    border: none;
 }
 label {
-    font-family: "Arial", serif;
+    font-family: "Roboto", sans-serif;
     font-size: 48px;
+    color: #009051;
     width: 14ch;
 }
 input[type=radio] {
+    font-family: "Roboto", sans-serif;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
     border-radius: 50%;
     width: 4ch;
     height: 4ch;
-    border: 1ch solid #dddddd;
+    border: 1ch solid #006539;
     transition: 0.2s all linear;
     margin-right: 2ch;
     position: relative;
 }
 input:checked {
-    border: 1.5ch solid cyan;
+    border: 1.5ch solid #dc2b00;
     outline: unset !important;
 }

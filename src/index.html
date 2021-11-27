@@ -10,7 +10,6 @@
     <body>
         <div id="container">
             <canvas id="chart_canvas" width="850px" height="1400px"></canvas>
-            <button id="start_button">Start</button>
             <div id="move_div">Move</div>
             <div class="legend">
                 <div id="version">version: x.x.x</div>
@@ -22,7 +21,6 @@
 
                 <div id="mode">
                     <fieldset>
-                        <legend>Control mode</legend>
                         <label for="manual_mode_id"><input id="manual_mode_id" type="radio" name="mode_switch" value="manual" checked>
                             Manual</label>
                         <label for="automatic_mode_id"><input id="automatic_mode_id" type="radio" name="mode_switch" value="automatic">
@@ -31,7 +29,9 @@
                             Shake</label>
                     </fieldset>
                 </div>
+                <button id="start_button">Start</button>
             </div>
+
             <div id="animation_div">
                 <div id="snake_div">
                     <img src="images/snake-head.svg" id="snake_head_img" alt="The snake's head" width="256px" height="256px">
