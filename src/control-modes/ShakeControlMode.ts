@@ -11,7 +11,6 @@ export class ShakeControlMode extends ControlMode {
     private _chartCanvasElement: HTMLCanvasElement | undefined = undefined;
     private _chartLabels: HTMLElement[] = [];
 
-
     private _accSeries: TimeSeries | undefined = undefined;
     private _periodSeries: TimeSeries | undefined = undefined;
     private _debugAccSeries: TimeSeries | undefined = undefined;
@@ -139,6 +138,9 @@ export class ShakeControlMode extends ControlMode {
     }
 
     private _initializeChart() {
+        window.removeEventListener('resize', this._resizeHandler);
+        window.addEventListener('resize', this._resizeHandler);
+
         this._deactivateChartLabels();
         this._chartLabels = [];
 
@@ -162,7 +164,7 @@ export class ShakeControlMode extends ControlMode {
                     //millisPerLine: 100, <-- doesn't work
                     verticalSections: 40,
                     //lineWidth: 0.1,
-                    sharpLines: true,
+                    sharpLines: false,
                     //strokeStyle: "black",
                 }
             });
@@ -195,6 +197,7 @@ export class ShakeControlMode extends ControlMode {
 
         this._chartCanvasElement = document.getElementById("chart_canvas") as HTMLCanvasElement;
         if (this._chartLevel > 0 && this._chartCanvasElement) {
+            this._resizeHandler();
             this._chart?.streamTo(this._chartCanvasElement, 500);
         }
     }
@@ -271,6 +274,17 @@ export class ShakeControlMode extends ControlMode {
             await this._start();
         } else if (this._state === ControlModeState.Started) {
             await this._stop();
+        }
+    }
+
+    private readonly _resizeHandler = () => {
+        if (this._chartCanvasElement) {
+            // this._chartCanvasElement.style.width = window.innerWidth + "px";
+            // this._chartCanvasElement.style.height = window.innerHeight + "px";
+            // this._chartCanvasElement.width = window.innerWidth / 4;
+            // this._chartCanvasElement.height = window.innerHeight / 4;
+            this._chartCanvasElement.width = window.innerWidth;
+            this._chartCanvasElement.height = window.innerHeight;
         }
     }
 }

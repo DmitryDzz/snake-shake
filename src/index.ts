@@ -1,5 +1,5 @@
 import 'regenerator-runtime/runtime';
-import {Box} from "./box";
+import {Snake} from "./snake";
 import {ManualControlMode} from "./control-modes/ManualControlMode";
 import {AutomaticControlMode} from "./control-modes/AutomaticControlMode";
 import {ShakeControlMode} from "./control-modes/ShakeControlMode";
@@ -10,7 +10,7 @@ const automaticControlMode: ControlMode = new AutomaticControlMode();
 const shakeControlMode: ControlMode = new ShakeControlMode();
 let currentControlMode: ControlMode = manualControlMode;
 
-let box: Box | undefined = undefined;
+let box: Snake | undefined = undefined;
 
 const onClickModeHandler = async (event: any) => {
     let newControlMode: ControlMode;
@@ -41,7 +41,7 @@ const initialize = () => {
         input.addEventListener("click", onClickModeHandler);
     });
 
-    box = new Box(
+    box = new Snake(
         // document.getElementById("animation_div")! as HTMLDivElement,
         document.getElementById("container_div")! as HTMLDivElement,
         document.getElementById("snake_div")! as HTMLDivElement,
@@ -51,7 +51,8 @@ const initialize = () => {
         256, 20);
 };
 
-const drawFrame = (): void => {
+const drawFrame = (t: DOMHighResTimeStamp): void => {
+    //TODO DZZ Используй t!
     const position11: number = currentControlMode.getPosition11();
     box?.setPosition11(position11);
     box?.update();
@@ -72,7 +73,7 @@ const outputErrorHandler = (message: string) => {
     console.log("Hello Snake!");
 
     const versionElement: HTMLDivElement = document.getElementById("version") as HTMLDivElement;
-    versionElement.textContent = `version: ${process.env.npm_package_version}`;
+    versionElement.textContent = `v${process.env.npm_package_version}`;
 
     initialize();
     (async () => {

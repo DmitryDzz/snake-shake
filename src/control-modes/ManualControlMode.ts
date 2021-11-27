@@ -7,6 +7,7 @@ interface PointerData {
 }
 
 export class ManualControlMode extends ControlMode {
+    private _parentDiv: HTMLDivElement | undefined = undefined;
     private _moveDiv: HTMLDivElement | undefined = undefined;
     private _screenZeroY!: number;
     private _maxDeltaY!: number;
@@ -24,16 +25,10 @@ export class ManualControlMode extends ControlMode {
         await super.initialize(onErrorCallback);
         this._state = ControlModeState.Started;
 
-        const parentDiv = document.getElementById("container_div") as HTMLDivElement;
+        this._parentDiv = document.getElementById("container_div") as HTMLDivElement;
         this._moveDiv = document.getElementById("move_div") as HTMLDivElement;
 
-        const padding = 20;
-        this._minY = padding;
-        const screenHeight = parentDiv.offsetHeight;
-        const moveDivSize = this._moveDiv.clientWidth;
-        this._maxY = screenHeight - padding - moveDivSize;
-        this._maxDeltaY = (this._maxY - this._minY) / 2;
-        this._screenZeroY = padding + this._maxDeltaY;
+        this._resizeHandler();
         this._moveDiv.style.top = this._screenZeroY + "px";
         this._moveDiv.style.visibility = "visible";
     }
@@ -59,6 +54,7 @@ export class ManualControlMode extends ControlMode {
     }
 
     private _addListeners() {
+        window.addEventListener("resize", this._resizeHandler);
         this._moveDiv!.addEventListener("pointerdown", this._pointerDownHandler);
         document.addEventListener("pointerup", this._pointerUpHandler);
         document.addEventListener("pointermove", this._pointerMoveHandler);
@@ -66,13 +62,27 @@ export class ManualControlMode extends ControlMode {
     }
 
     private _removeListeners() {
+        window.removeEventListener("resize", this._resizeHandler);
         this._moveDiv!.removeEventListener("pointerdown", this._pointerDownHandler);
         document.removeEventListener("pointerup", this._pointerUpHandler);
         document.removeEventListener("pointermove", this._pointerMoveHandler);
         document.removeEventListener("pointerleave", this._pointerLeaveHandler);
     }
 
-    private _pointerDownHandler = (ev: any) => {
+    private readonly _resizeHandler = () => {
+        const padding = 20;
+        this._minY = padding;
+        const screenHeight = this._parentDiv!.offsetHeight;
+        const moveDivSize = this._moveDiv!.clientWidth;
+        this._maxY = screenHeight - padding - moveDivSize;
+        this._maxDeltaY = (this._maxY - this._minY) / 2;
+        this._screenZeroY = padding + this._maxDeltaY;
+
+        const top = this._screenZeroY - this._position11 * this._maxDeltaY;
+        this._moveDiv!.style.top = top + "px";
+    }
+
+    private readonly _pointerDownHandler = (ev: any) => {
         if (this._pointerData) return;
         const rect = ev.target.getBoundingClientRect();
         this._pointerData = {
@@ -82,13 +92,13 @@ export class ManualControlMode extends ControlMode {
         }
     }
 
-    private _pointerUpHandler = (ev: any) => {
+    private readonly _pointerUpHandler = (ev: any) => {
         if (this._pointerData && ev.pointerId === this._pointerData.pointerId) {
             this._pointerData = undefined;
         }
     }
 
-    private _pointerMoveHandler = (ev: any) => {
+    private readonly _pointerMoveHandler = (ev: any) => {
         if (this._moveDiv && this._pointerData && ev.pointerId === this._pointerData.pointerId) {
             const deltaY = ev.clientY - this._pointerData.pointerStartY;
             let top = this._pointerData.buttonStartY + deltaY;
@@ -103,7 +113,7 @@ export class ManualControlMode extends ControlMode {
         }
     }
 
-    private _pointerLeaveHandler = (ev: any) => {
+    private readonly _pointerLeaveHandler = (ev: any) => {
         if (this._pointerData && ev.pointerId === this._pointerData.pointerId) {
             this._pointerData = undefined;
         }

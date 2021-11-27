@@ -1,13 +1,16 @@
 import {gsap as gs} from "gsap";
 import Timeline = gsap.core.Timeline;
 
-export class Box {
+export class Snake {
+    private readonly _parentDiv: HTMLDivElement;
     private readonly _snakeDiv: HTMLDivElement;
     private readonly _snakeHeadImage: HTMLImageElement;
     private readonly _snakeBodyImage: HTMLImageElement;
     private readonly _snakeTongueImage: HTMLImageElement;
-    private readonly _screenZeroY: number;
-    private readonly _maxDeltaY: number;
+    private readonly _boxSize: number;
+    private readonly _padding: number;
+    private _screenZeroY: number = 0;
+    private _maxDeltaY: number = 0;
     private readonly _animation: Timeline;
 
     private _targetPosition11: number = 0;
@@ -21,21 +24,17 @@ export class Box {
                 snakeBodyImage: HTMLImageElement,
                 snakeTongueImage: HTMLImageElement,
                 boxSize: number, padding: number) {
+        this._parentDiv = parentDiv;
         this._snakeDiv = snakeDiv;
         this._snakeHeadImage = snakeHeadImage;
         this._snakeBodyImage = snakeBodyImage;
         this._snakeTongueImage = snakeTongueImage;
-        // this._accCore = accCore;
+        this._boxSize = boxSize;
+        this._padding = padding;
 
-        const minY = padding;
-        // console.log("++++++++++ oW:", parentDiv.offsetWidth, ", oH:", parentDiv.offsetHeight,
-        //     ", wW:", window.innerWidth, ", wH:", window.innerHeight,
-        //     ", cW:", parentDiv.clientWidth, ", cH:", parentDiv.clientHeight);
-        const screenHeight = parentDiv.offsetHeight;
-        // const screenHeight = parentDiv.clientHeight;
-        const maxY = screenHeight - padding - boxSize;
-        this._maxDeltaY = (maxY - minY) / 2;
-        this._screenZeroY = padding + this._maxDeltaY;
+        window.removeEventListener('resize', this._resizeHandler);
+        window.addEventListener('resize', this._resizeHandler);
+        this._resizeHandler();
 
         snakeDiv.style.left = (parentDiv.offsetWidth - boxSize) / 2 + "px";
         // snakeDiv.style.left = (parentDiv.clientWidth - boxSize) / 2 + "px";
@@ -90,5 +89,14 @@ export class Box {
         } else {
             this._animation.progress(0);
         }
+    }
+
+    private readonly _resizeHandler = () => {
+        const minY = this._padding;
+        const screenHeight = this._parentDiv.offsetHeight;
+        const maxY = screenHeight - this._padding - this._boxSize;
+        this._maxDeltaY = (maxY - minY) / 2;
+        this._screenZeroY = this._padding + this._maxDeltaY;
+        this._snakeDiv.style.left = (this._parentDiv.offsetWidth - this._boxSize) / 2 + "px";
     }
 }
