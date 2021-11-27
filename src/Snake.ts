@@ -2,6 +2,8 @@ import {gsap as gs} from "gsap";
 import Timeline = gsap.core.Timeline;
 
 export class Snake {
+    private readonly MAX_SPEED_11: number = 10.0 / 1000.0; // Full amplitude (-1..+1 = 2.0) per millisecond.
+
     private readonly _parentDiv: HTMLDivElement;
     private readonly _snakeDiv: HTMLDivElement;
     private readonly _snakeHeadImage: HTMLImageElement;
@@ -15,7 +17,6 @@ export class Snake {
 
     private _targetPosition11: number = 0;
     private _actualPosition11: number = 0;
-    private readonly MAX_SPEED_11: number = 10.0 / 1000.0; // Full amplitude (-1..+1 = 2.0) per millisecond.
     private _time: number | undefined = undefined;
 
     constructor(parentDiv: HTMLDivElement,
@@ -59,8 +60,7 @@ export class Snake {
     /**
      * Must be called continuously.
      */
-    update() {
-        const time = Date.now();
+    update(time: number) {
         if (this._time === undefined) {
             this._actualPosition11 = this._targetPosition11;
         } else {

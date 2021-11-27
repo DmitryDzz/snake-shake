@@ -14,39 +14,39 @@ html, body {
     min-height: 98vh;
     */
     width: 100%;
-    height: 100%;
+    min-height: 100%;
 }
 
 #chart_canvas {
     border: 0;
     position: absolute;
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     z-index: 10;
 }
 
 #snake_div {
     position: absolute;
-    width: 256px;
-    height: 256px;
+    width: 16em;
+    height: 16em;
     z-index: 30;
     visibility: hidden;
 }
 #snake_head_img {
     position: absolute;
     z-index: 33;
-    filter: drop-shadow( 8px 8px 8px rgba(0, 0, 0, .7));
+    filter: drop-shadow( 0.5em 0.5em 0.5em rgba(0, 0, 0, .7));
 }
 #snake_body_img {
     position: absolute;
     z-index: 32;
-    filter: drop-shadow( 8px 8px 8px rgba(0, 0, 0, .7));
+    filter: drop-shadow( 0.5em 0.5em 0.5em rgba(0, 0, 0, .7));
 }
 #snake_tongue_img {
     position: absolute;
     opacity: 0;
     z-index: 31;
-    filter: drop-shadow( 8px 8px 8px rgba(0, 0, 0, .7));
+    filter: drop-shadow( 0.5em 0.5em 0.5em rgba(0, 0, 0, .7));
 }
 
 button {
@@ -56,7 +56,7 @@ button {
     background: #dc2b00;
     color: #cbc08e;
     border-radius: 50%;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.7);
     border: none;
     left: 2ch;
     top: 2ch;
@@ -71,7 +71,7 @@ button {
     background: #dc2b00;
     color: #cbc08e;
     border-radius: 50%;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.7);
     position: absolute;
     right: 2ch;
     top: 2ch;
@@ -94,16 +94,16 @@ button {
 
 #version {
     position: relative;
-    left: 20px;
-    top: 24px;
+    left: 1.25em;
+    top: 1.5em;
     z-index: 40;
     color: #fe6400;
     display: block;
 }
 #error_message {
     position: relative;
-    left: 20px;
-    top: 24px;
+    left: 1.25em;
+    top: 1.5em;
     z-index: 40;
     color: #dc2b00;
     display: block;
@@ -112,8 +112,8 @@ button {
 .legend {
     position: absolute;
     text-align: right;
-    right: 20px;
-    top: 24px;
+    right: 1.25em;
+    top: 1.5em;
     z-index: 40;
     display: block;
 }

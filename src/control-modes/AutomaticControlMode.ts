@@ -16,7 +16,7 @@ export class AutomaticControlMode extends ControlMode {
     async deactivate() {
     }
 
-    getPosition11(): number {
+    getPosition11(_time: number): number {
         return 0;
     }
 }

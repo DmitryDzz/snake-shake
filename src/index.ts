@@ -51,11 +51,10 @@ const initialize = () => {
         256, 20);
 };
 
-const drawFrame = (t: DOMHighResTimeStamp): void => {
-    //TODO DZZ Используй t!
-    const position11: number = currentControlMode.getPosition11();
+const drawFrame = (time: DOMHighResTimeStamp): void => {
+    const position11: number = currentControlMode.getPosition11(time);
     snake?.setPosition11(position11);
-    snake?.update();
+    snake?.update(time);
     requestAnimationFrame(drawFrame);
 }
 

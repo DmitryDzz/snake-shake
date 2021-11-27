@@ -22,7 +22,7 @@ export abstract class ControlMode {
 
     abstract activate(): Promise<void>;
     abstract deactivate(): Promise<void>;
-    abstract getPosition11(): number;
+    abstract getPosition11(time: number): number;
 
     protected _outputError = (message: string) => {
         if (this._errorHandler)

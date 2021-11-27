@@ -98,16 +98,15 @@ export class ShakeControlMode extends ControlMode {
         this.disableNoSleep();
     }
 
-    getPosition11(): number {
+    getPosition11(time: number): number {
         if (this._accCore !== undefined && this._accCore.started) {
-            const t = new Date().getTime();
             if (this._textPeriodElement?.style.visibility === "visible") {
                 const periodInSeconds = this._accCore.getPeriod() / 1000;
                 const periodLabelValue = periodInSeconds > 999 ? "INF" : periodInSeconds.toFixed(3);
                 const frequencyLabelValue = periodInSeconds <= 0 || periodInSeconds > 999 ? "0" : (1 / periodInSeconds).toFixed(3);
                 this._textPeriodElement.innerText = `period: ${periodLabelValue} (s) ⇨ freq=${frequencyLabelValue} Hz`;
             }
-            return this._accCore.getPosition11(t);
+            return this._accCore.getPosition11(time);
         }
         return 0;
     }

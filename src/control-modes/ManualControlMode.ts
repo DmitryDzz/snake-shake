@@ -50,7 +50,7 @@ export class ManualControlMode extends ControlMode {
         }
     }
 
-    getPosition11(): number {
+    getPosition11(_time: number): number {
         return this._position11;
     }
 
