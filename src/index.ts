@@ -42,7 +42,8 @@ const initialize = () => {
     });
 
     box = new Box(
-        document.getElementById("animation_div")! as HTMLDivElement,
+        // document.getElementById("animation_div")! as HTMLDivElement,
+        document.getElementById("container_div")! as HTMLDivElement,
         document.getElementById("snake_div")! as HTMLDivElement,
         document.getElementById("snake_head_img")! as HTMLImageElement,
         document.getElementById("snake_body_img")! as HTMLImageElement,

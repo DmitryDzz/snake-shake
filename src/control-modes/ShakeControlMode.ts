@@ -9,6 +9,8 @@ export class ShakeControlMode extends ControlMode {
     private _chartLevel: number = 0;
     private _chart: SmoothieChart | undefined = undefined;
     private _chartCanvasElement: HTMLCanvasElement | undefined = undefined;
+    private _chartLabels: HTMLElement[] = [];
+
 
     private _accSeries: TimeSeries | undefined = undefined;
     private _periodSeries: TimeSeries | undefined = undefined;
@@ -76,8 +78,10 @@ export class ShakeControlMode extends ControlMode {
         this._accSensor?.start();
         if (this._chartCanvasElement && this._chartLevel > 0)
             this._chartCanvasElement.style.visibility = "visible";
-        if (this._chartLevel > 0)
+        if (this._chartLevel > 0) {
+            this._activateChartLabels();
             this._chart?.start();
+        }
         await this.enableNoSleepAsync();
     }
 
@@ -91,6 +95,7 @@ export class ShakeControlMode extends ControlMode {
         if (this._chartCanvasElement)
             this._chartCanvasElement.style.visibility = "hidden";
         this._chart?.stop();
+        this._deactivateChartLabels();
         this.disableNoSleep();
     }
 
@@ -125,7 +130,18 @@ export class ShakeControlMode extends ControlMode {
         document.addEventListener("visibilitychange", this._onPageVisibilityChangeHandler);
     }
 
+    private _activateChartLabels() {
+        this._chartLabels.forEach(element => element.style.display = "block");
+    }
+
+    private _deactivateChartLabels() {
+        this._chartLabels.forEach(element => element.style.display = "none");
+    }
+
     private _initializeChart() {
+        this._deactivateChartLabels();
+        this._chartLabels = [];
+
         const urlParams = new URLSearchParams(document.location.search);
         this._chartLevel = parseInt(urlParams.get("chart") ?? "0");
 
@@ -154,25 +170,28 @@ export class ShakeControlMode extends ControlMode {
 
         let currentChartLevel = 0;
         if (this._chartLevel > currentChartLevel++) {
-            document.getElementById("accLegend")!.style.display = "block";
+            this._chartLabels.push(document.getElementById("accLegend")!);
+            // document.getElementById("accLegend")!.style.display = "block";
             this._accSeries = new TimeSeries();
             this._chart?.addTimeSeries(this._accSeries, {lineWidth: 2, strokeStyle: "#f36400"});
         }
         if (this._chartLevel > currentChartLevel++) {
-            document.getElementById("periodLegend")!.style.display = "block";
+            this._chartLabels.push(document.getElementById("periodLegend")!);
+            // document.getElementById("periodLegend")!.style.display = "block";
             this._periodSeries = new TimeSeries();
             this._chart?.addTimeSeries(this._periodSeries, {lineWidth: 2, strokeStyle: "#009051"});
         }
         if (this._chartLevel > currentChartLevel++) {
-            document.getElementById("debugAccLegend")!.style.display = "block";
+            this._chartLabels.push(document.getElementById("debugAccLegend")!);
+            // document.getElementById("debugAccLegend")!.style.display = "block";
             this._debugAccSeries = new TimeSeries();
             this._chart?.addTimeSeries(this._debugAccSeries, {lineWidth: 2, strokeStyle: "#cbc08e"});
         }
-        // if (this._chartLevel > currentChartLevel++) {
-        //     document.getElementById("ticksLegend")!.style.display = "block";
-        //     ticksSeries = new TimeSeries();
-        //     chart.addTimeSeries(ticksSeries, {lineWidth: 2, strokeStyle: "#ffff0080"})
-        // }
+        if (this._chartLevel > currentChartLevel++) {
+            // this._chartLabels.push(document.getElementById("ticksLegend")!);
+            // ticksSeries = new TimeSeries();
+            // chart.addTimeSeries(ticksSeries, {lineWidth: 2, strokeStyle: "#ffff0080"})
+        }
 
         this._chartCanvasElement = document.getElementById("chart_canvas") as HTMLCanvasElement;
         if (this._chartLevel > 0 && this._chartCanvasElement) {

@@ -8,16 +8,26 @@
     </head>
 
     <body>
-        <div id="container">
+        <div id="container_div">
             <canvas id="chart_canvas" width="850px" height="1400px"></canvas>
             <div id="move_div">Move</div>
             <div class="legend">
                 <div id="version">version: x.x.x</div>
+
                 <div id="accLegend">acceleration y (m/s²)</div>
                 <div id="periodLegend">period: 0 (s)</div>
                 <div id="debugAccLegend">debug acceleration y (m/s²)</div>
 
                 <div id="error_message"></div>
+            </div>
+
+<!--            <div id="animation_div">-->
+
+                <div id="snake_div">
+                    <img src="images/snake-head.svg" id="snake_head_img" alt="The snake's head" width="256px" height="256px">
+                    <img src="images/snake-body.svg" id="snake_body_img" alt="The snake's body" width="256px" height="256px">
+                    <img src="images/snake-tongue.svg" id="snake_tongue_img" alt="The snake's tongue" width="256px" height="256px">
+                </div>
 
                 <div id="mode">
                     <fieldset>
@@ -29,16 +39,10 @@
                             Shake</label>
                     </fieldset>
                 </div>
-                <button id="start_button">Start</button>
-            </div>
 
-            <div id="animation_div">
-                <div id="snake_div">
-                    <img src="images/snake-head.svg" id="snake_head_img" alt="The snake's head" width="256px" height="256px">
-                    <img src="images/snake-body.svg" id="snake_body_img" alt="The snake's body" width="256px" height="256px">
-                    <img src="images/snake-tongue.svg" id="snake_tongue_img" alt="The snake's tongue" width="256px" height="256px">
-                </div>
-            </div>
+                <button id="start_button">Start</button>
+
+<!--            </div>-->
         </div>
         <script src="index.ts"></script>
     </body>

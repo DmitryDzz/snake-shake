@@ -1,4 +1,10 @@
-#container {
+body {
+    font-family: "Roboto", sans-serif;
+    font-size: 48px;
+    background-color: #2d2d2d;
+}
+
+#container_div {
     position: absolute;
     min-width: 98vw;
     min-height: 98vh;
@@ -11,73 +17,39 @@
     z-index: 10;
 }
 
-#animation_div {
-    position: absolute;
-    min-width: 98vw;
-    min-height: 98vh;
-    z-index: 20;
-}
-
 #snake_div {
-    position: relative;
+    position: absolute;
     width: 256px;
     height: 256px;
     z-index: 30;
     visibility: hidden;
 }
-
 #snake_head_img {
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 256px;
-    height: 256px;
     z-index: 33;
     filter: drop-shadow( 8px 8px 8px rgba(0, 0, 0, .7));
 }
 #snake_body_img {
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 256px;
-    height: 256px;
     z-index: 32;
     filter: drop-shadow( 8px 8px 8px rgba(0, 0, 0, .7));
 }
 #snake_tongue_img {
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 256px;
-    height: 256px;
     opacity: 0;
     z-index: 31;
     filter: drop-shadow( 8px 8px 8px rgba(0, 0, 0, .7));
 }
 
-body {
-    background-color: #2d2d2d;
-}
-
-div {
-    font-family: "Roboto", sans-serif;
-    font-size: 48px;
-}
-
-div #error_message {
-    color: red;
-}
-
 button {
-    font-family: "Roboto", sans-serif;
-    font-size: 48px;
+    position: relative;
+    font-size: inherit;
     text-transform: uppercase;
     background: #dc2b00;
     color: #cbc08e;
     border-radius: 50%;
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.7);
     border: none;
-    position: relative;
     left: 2ch;
     top: 2ch;
     width: 8ch;
@@ -87,8 +59,6 @@ button {
 }
 
 #move_div {
-    font-family: "Roboto", sans-serif;
-    font-size: 48px;
     text-transform: uppercase;
     background: #dc2b00;
     color: #cbc08e;
@@ -115,46 +85,53 @@ button {
 }
 
 .legend {
-    position: absolute;
+    position: relative;
     left: 20px;
     top: 20px;
     z-index: 40;
+    display: block;
 }
-.legend #version {
+#version {
     color: #ffff00;
     display: block;
 }
-.legend #accLegend {
+#accLegend {
     color: #fe6400;
     display: none;
 }
-.legend #periodLegend {
+#periodLegend {
     color: #009051;
     display: none;
 }
-.legend #debugAccLegend {
+#debugAccLegend {
     color: #cbc08e;
     display: none;
 }
-.legend #mode {
+#error_message {
+    color: red;
+    /*display: block;*/
+}
+
+#mode {
     color: #dddddd;
     margin-top: 2ch;
     display: block;
+    z-index: 40;
 }
 
 fieldset {
     display: inline-grid;
     line-height: 2.5;
     border: none;
+    z-index: inherit;
 }
 label {
-    font-family: "Roboto", sans-serif;
-    font-size: 48px;
     color: #009051;
     width: 14ch;
+    display: initial;
+    z-index: inherit;
 }
 input[type=radio] {
-    font-family: "Roboto", sans-serif;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -168,5 +145,5 @@ input[type=radio] {
 }
 input:checked {
     border: 1.5ch solid #dc2b00;
-    outline: unset !important;
+    /*outline: unset !important;*/
 }

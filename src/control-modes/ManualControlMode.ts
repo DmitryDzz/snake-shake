@@ -24,7 +24,7 @@ export class ManualControlMode extends ControlMode {
         await super.initialize(onErrorCallback);
         this._state = ControlModeState.Started;
 
-        const parentDiv = document.getElementById("animation_div") as HTMLDivElement;
+        const parentDiv = document.getElementById("container_div") as HTMLDivElement;
         this._moveDiv = document.getElementById("move_div") as HTMLDivElement;
 
         const padding = 20;
