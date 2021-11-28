@@ -1,2 +1,2 @@
-# web-shake
-Mobile accelerometer in web application
+# snake-shake
+A mobile accelerometer in web application
