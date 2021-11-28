@@ -34,6 +34,8 @@ class ThumbData {
 }
 
 export class AutomaticControlMode extends BaseAutoControlMode {
+    private static readonly TWO_PI = 2 * Math.PI;
+
     private readonly _sliderBackgroundNormalColor = "#006539";
     private readonly _sliderBackgroundFocusedColor = "#009051";
 
@@ -84,8 +86,23 @@ export class AutomaticControlMode extends BaseAutoControlMode {
         }
     }
 
-    getPosition11(_time: number): number {
-        return 0;
+    private _startTime: number | undefined = undefined;
+    private _period: number = 1000;
+    private _amplitude: number = 1;
+    private _phase: number = 0;
+    private _previousPhase: number = 0;
+    private _position11: number = 0;
+
+    getPosition11(time: number): number {
+        if (this._state === ControlModeState.Started) {
+            if (this._startTime === undefined) {
+                this._startTime = time;
+                this._previousPhase = this._phase;
+            }
+            this._phase = (time - this._startTime) * AutomaticControlMode.TWO_PI / this._period + this._previousPhase;
+            this._position11 = this._amplitude * Math.sin(this._phase);
+        }
+        return this._position11;
     }
 
     protected _initializeHtmlElements() {
@@ -109,14 +126,11 @@ export class AutomaticControlMode extends BaseAutoControlMode {
 
     protected async _start() {
         await super._start();
-        //...
-        console.log("auto start");
     }
 
     protected async _stop() {
         await super._stop();
-        //...
-        console.log("auto stop");
+        this._startTime = undefined;
     }
 
     private _addListeners() {
