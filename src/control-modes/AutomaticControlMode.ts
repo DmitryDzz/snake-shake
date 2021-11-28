@@ -41,9 +41,22 @@ export class AutomaticControlMode extends BaseAutoControlMode {
 
     private _parentDiv: HTMLDivElement | undefined = undefined;
     private _sliders: HTMLDivElement | undefined = undefined;
+    private _legendDiv: HTMLDivElement | undefined = undefined;
 
     private readonly _amplitudeData: ThumbData;
     private readonly _frequencyData: ThumbData;
+
+    private _startTime: number | undefined = undefined;
+    private _period: number = 1000;
+    private _amplitude: number = 1;
+    private _phase: number = 0;
+    private _previousPhase: number = 0;
+    private _position11: number = 0;
+
+    private readonly _minPeriod: number = 500;
+    private readonly _maxPeriod: number = 2000;
+    private readonly _minAmplitude: number = 0.1;
+    private readonly _maxAmplitude: number = 1;
 
     constructor() {
         super(ControlModeType.Automatic);
@@ -76,6 +89,14 @@ export class AutomaticControlMode extends BaseAutoControlMode {
             this._removeListeners();
             this._addListeners();
         }
+
+        this._period = this._getPeriod(this._frequencyData.position11);
+        this._amplitude = this._getAmplitude(this._amplitudeData.position11);
+
+        if (this._legendDiv) {
+            this._updateLegendDiv();
+            this._legendDiv.style.display = "block";
+        }
     }
 
     async deactivate() {
@@ -84,14 +105,11 @@ export class AutomaticControlMode extends BaseAutoControlMode {
             this._sliders.style.visibility = "hidden";
             this._removeListeners();
         }
+        if (this._legendDiv) {
+            this._clearLegendDiv();
+            this._legendDiv.style.visibility = "none";
+        }
     }
-
-    private _startTime: number | undefined = undefined;
-    private _period: number = 1000;
-    private _amplitude: number = 1;
-    private _phase: number = 0;
-    private _previousPhase: number = 0;
-    private _position11: number = 0;
 
     getPosition11(time: number): number {
         if (this._state === ControlModeState.Started) {
@@ -110,6 +128,7 @@ export class AutomaticControlMode extends BaseAutoControlMode {
 
         this._parentDiv = document.getElementById("container_div") as HTMLDivElement;
         this._sliders = document.getElementById("sliders") as HTMLDivElement;
+        this._legendDiv = document.getElementById("periodLegend") as HTMLDivElement;
 
         this._amplitudeData.backgroundElement = document.getElementById("amplitude_background") as HTMLDivElement;
         this._amplitudeData.thumbElement = document.getElementById("amplitude_thumb") as HTMLDivElement;
@@ -215,7 +234,37 @@ export class AutomaticControlMode extends BaseAutoControlMode {
         this._pointerUpHandler(ev);
     }
 
-    private _onSliderChanged = (thumbType: ThumbType, thumbElement: HTMLDivElement, newValue11: number, oldValue: number) => {
-        console.log(`${ThumbType[thumbType]} => ${newValue11}`);
+    private _onSliderChanged = (thumbType: ThumbType, _thumbElement: HTMLDivElement, _newValue11: number, _oldValue: number) => {
+        this._startTime = undefined;
+        if (thumbType === ThumbType.Frequency) {
+            this._period = this._getPeriod(this._frequencyData.position11);
+        } else if (thumbType === ThumbType.Amplitude) {
+            this._amplitude = this._getAmplitude(this._amplitudeData.position11);
+        }
+        this._updateLegendDiv();
+    }
+
+    private readonly _getPeriod = (thumbPosition11: number): number => {
+        const factor = 1.0 - (thumbPosition11 + 1.0) / 2.0;
+        return this._minPeriod + factor * (this._maxPeriod - this._minPeriod);
+    }
+
+    private readonly _getAmplitude = (thumbPosition11: number): number => {
+        const factor = (thumbPosition11 + 1.0) / 2.0;
+        return this._minAmplitude + factor * (this._maxAmplitude - this._minAmplitude);
+    }
+
+    private _updateLegendDiv = () => {
+        if (this._legendDiv) {
+            const a = this._amplitude * 10;
+            const f = 1000.0 / this._period;
+            this._legendDiv.innerText = `Amplitude (Δ): ${a.toFixed(2)} cm\nFrequency (ƒ): ${f.toFixed(2)} Hz`;
+        }
+    }
+
+    private _clearLegendDiv = () => {
+        if (this._legendDiv) {
+            this._legendDiv.innerText = "";
+        }
     }
 }
