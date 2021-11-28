@@ -9,19 +9,15 @@ html, body {
 
 #container_div {
     position: absolute;
-    /*
-    min-width: 98vw;
-    min-height: 98vh;
-    */
     width: 100%;
-    min-height: 100%;
+    height: 100%;
 }
 
 #chart_canvas {
     border: 0;
     position: absolute;
     width: 100%;
-    min-height: 100%;
+    height: 100%;
     z-index: 10;
 }
 
@@ -49,8 +45,8 @@ html, body {
     filter: drop-shadow( 0.5em 0.5em 0.5em rgba(0, 0, 0, .7));
 }
 
-button {
-    position: relative;
+#start_button {
+    position: absolute;
     font-size: inherit;
     text-transform: uppercase;
     background: #dc2b00;
@@ -59,7 +55,7 @@ button {
     box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.7);
     border: none;
     left: 2ch;
-    top: 2ch;
+    bottom: 2ch;
     width: 8ch;
     height: 8ch;
     z-index: 50;
@@ -94,9 +90,11 @@ button {
 
 #version {
     position: relative;
-    left: 1.25em;
-    top: 1.5em;
+    left: 0.75em;
+    top: 0.75em;
+    padding-bottom: 0.5em;
     z-index: 40;
+    font-size: 0.64em;
     color: #fe6400;
     display: block;
 }
@@ -164,4 +162,66 @@ input[type=radio] {
 input:checked {
     border: 1.5ch solid #dc2b00;
     outline: unset !important;
+}
+
+#sliders {
+    visibility: hidden;
+}
+#amplitude_background {
+    position: absolute;
+    right: 6rem;
+    top: 4rem;
+    width: 1rem;
+    height: 60%;
+    border-radius: 0.5rem;
+    /*background: #009051;*/
+    background: #006539;
+    z-index: 50;
+}
+#frequency_background {
+    position: absolute;
+    right: 2rem;
+    top: 4rem;
+    width: 1rem;
+    height: 60%;
+    border-radius: 0.5rem;
+    /*background: #009051;*/
+    background: #006539;
+    z-index: 50;
+}
+#amplitude_thumb {
+    position: absolute;
+    width: 2rem;
+    height: 2rem;
+    right: 5.5rem;
+    top: 9rem;
+    z-index: 51;
+}
+#frequency_thumb {
+    position: absolute;
+    width: 2rem;
+    height: 2rem;
+    right: 1.5rem;
+    top: 9rem;
+    z-index: 51;
+}
+.slider_background {
+    box-shadow: 0.1rem 0.1rem 0.5rem rgba(0, 0, 0, 0.7);
+}
+.slider_thumb {
+    background: #dc2b00;
+    color: #cbc08e;
+    border-radius: 50%;
+    box-shadow: 0.1rem 0.1rem 0.5rem rgba(0, 0, 0, 0.7);
+
+    text-align: center;
+    vertical-align: middle;
+    line-height: 2rem;
+
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+
+    touch-action: none;
 }

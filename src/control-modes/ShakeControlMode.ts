@@ -9,8 +9,8 @@ export class ShakeControlMode extends BaseAutoControlMode {
     private _chartCanvasElement: HTMLCanvasElement | undefined = undefined;
     private _chartLabels: HTMLElement[] = [];
 
-    private _accSeries: TimeSeries | undefined = undefined;
     private _periodSeries: TimeSeries | undefined = undefined;
+    private _accSeries: TimeSeries | undefined = undefined;
     private _debugAccSeries: TimeSeries | undefined = undefined;
     // private _ticksSeries: TimeSeries | undefined = undefined;
 
@@ -140,16 +140,16 @@ export class ShakeControlMode extends BaseAutoControlMode {
 
         let currentChartLevel = 0;
         if (this._chartLevel > currentChartLevel++) {
-            this._chartLabels.push(document.getElementById("accLegend")!);
-            // document.getElementById("accLegend")!.style.display = "block";
-            this._accSeries = new TimeSeries();
-            this._chart?.addTimeSeries(this._accSeries, {lineWidth: 2, strokeStyle: "#f36400"});
-        }
-        if (this._chartLevel > currentChartLevel++) {
             this._chartLabels.push(document.getElementById("periodLegend")!);
             // document.getElementById("periodLegend")!.style.display = "block";
             this._periodSeries = new TimeSeries();
             this._chart?.addTimeSeries(this._periodSeries, {lineWidth: 2, strokeStyle: "#009051"});
+        }
+        if (this._chartLevel > currentChartLevel++) {
+            this._chartLabels.push(document.getElementById("accLegend")!);
+            // document.getElementById("accLegend")!.style.display = "block";
+            this._accSeries = new TimeSeries();
+            this._chart?.addTimeSeries(this._accSeries, {lineWidth: 2, strokeStyle: "#f36400"});
         }
         if (this._chartLevel > currentChartLevel++) {
             this._chartLabels.push(document.getElementById("debugAccLegend")!);
@@ -191,11 +191,11 @@ export class ShakeControlMode extends BaseAutoControlMode {
                 //console.log("d:", new Date().getTime(), "ev:", ev.timeStamp, "s:", ts, "r:", startTimestamp + ts);
                 this._accCore.update({t: ts, y: y});
 
+                this._periodSeries?.append(t, this._accCore.getPeriod() / 100);
                 this._accSeries?.append(t, y);
                 // this._ticksSeries?.append(t-1, 0);
                 // this._ticksSeries?.append(t, 1);
                 // this._ticksSeries?.append(t+1, 0);
-                this._periodSeries?.append(t, this._accCore.getPeriod() / 100);
                 this._debugAccSeries?.append(t, this._accCore.getDebugAccY());
             });
 

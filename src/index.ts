@@ -72,7 +72,7 @@ const outputErrorHandler = (message: string) => {
     console.log("Hello Snake!");
 
     const versionElement: HTMLDivElement = document.getElementById("version") as HTMLDivElement;
-    versionElement.textContent = `v${process.env.npm_package_version}`;
+    versionElement.textContent = `v.${process.env.npm_package_version}`;
 
     initialize();
     (async () => {
