@@ -1,7 +1,12 @@
 import {ControlModeState, ControlModeType} from "./ControlMode";
 import {BaseAutoControlMode} from "./BaseAutoControlMode";
 
+enum ThumbType { Amplitude, Frequency }
+
+type OnChangedFunction = (thumbType: ThumbType, thumbElement: HTMLDivElement, newValue11: number, oldValue: number) => void;
+
 class ThumbData {
+    thumbType: ThumbType;
     pointerId: number | undefined;
     pointerStartY: number = 0;
     buttonStartY: number = 0;
@@ -11,7 +16,21 @@ class ThumbData {
     maxDeltaY: number = 0;
     minY: number = 0;
     maxY: number = 0;
-    position11: number = 0;
+    readonly onChanged: OnChangedFunction;
+
+    private _position11: number = 0;
+    set position11(value: number) {
+        if (value !== this._position11 && this.thumbElement) {
+            this.onChanged(this.thumbType, this.thumbElement, value, this._position11);
+            this._position11 = value;
+        }
+    }
+    get position11(): number { return this._position11; }
+
+    constructor(thumbType: ThumbType, onChanged: OnChangedFunction) {
+        this.thumbType = thumbType;
+        this.onChanged = onChanged;
+    }
 }
 
 export class AutomaticControlMode extends BaseAutoControlMode {
@@ -21,11 +40,13 @@ export class AutomaticControlMode extends BaseAutoControlMode {
     private _parentDiv: HTMLDivElement | undefined = undefined;
     private _sliders: HTMLDivElement | undefined = undefined;
 
-    private readonly _amplitudeData: ThumbData = new ThumbData();
-    private readonly _frequencyData: ThumbData = new ThumbData();
+    private readonly _amplitudeData: ThumbData;
+    private readonly _frequencyData: ThumbData;
 
     constructor() {
         super(ControlModeType.Automatic);
+        this._amplitudeData = new ThumbData(ThumbType.Amplitude, this._onSliderChanged);
+        this._frequencyData = new ThumbData(ThumbType.Frequency, this._onSliderChanged);
     }
 
     async initialize(onErrorCallback: (message: string) => void) {
@@ -118,13 +139,12 @@ export class AutomaticControlMode extends BaseAutoControlMode {
 
     private readonly _resizeHandler = () => {
         const updateThumbData = (thumbData: ThumbData) => {
-            const padding = 20;
-            thumbData.minY = padding;
-            const screenHeight = this._parentDiv!.offsetHeight;
-            const moveDivSize = thumbData.thumbElement!.clientWidth;
-            thumbData.maxY = screenHeight - padding - moveDivSize;
+            thumbData.backgroundElement!.style.top = ((this._parentDiv!.offsetHeight - thumbData.backgroundElement!.offsetHeight) / 2) + "px";
+
+            thumbData.minY = thumbData.backgroundElement!.offsetTop;
+            thumbData.maxY = thumbData.backgroundElement!.offsetTop + thumbData.backgroundElement!.offsetHeight - thumbData.thumbElement!.offsetHeight;
             thumbData.maxDeltaY = (thumbData.maxY - thumbData.minY) / 2;
-            thumbData.screenZeroY = padding + thumbData.maxDeltaY;
+            thumbData.screenZeroY = thumbData.minY + thumbData.maxDeltaY;
 
             const top = thumbData.screenZeroY - thumbData.position11 * thumbData.maxDeltaY;
             thumbData.thumbElement!.style.top = top + "px";
@@ -179,5 +199,9 @@ export class AutomaticControlMode extends BaseAutoControlMode {
 
     private readonly _pointerLeaveHandler = (ev: any) => {
         this._pointerUpHandler(ev);
+    }
+
+    private _onSliderChanged = (thumbType: ThumbType, thumbElement: HTMLDivElement, newValue11: number, oldValue: number) => {
+        console.log(`${ThumbType[thumbType]} => ${newValue11}`);
     }
 }

@@ -169,12 +169,11 @@ input:checked {
 }
 #amplitude_background {
     position: absolute;
-    right: 6rem;
+    right: 5.5rem;
     top: 4rem;
     width: 1rem;
     height: 60%;
     border-radius: 0.5rem;
-    /*background: #009051;*/
     background: #006539;
     z-index: 50;
 }
@@ -185,7 +184,6 @@ input:checked {
     width: 1rem;
     height: 60%;
     border-radius: 0.5rem;
-    /*background: #009051;*/
     background: #006539;
     z-index: 50;
 }
@@ -193,7 +191,7 @@ input:checked {
     position: absolute;
     width: 2rem;
     height: 2rem;
-    right: 5.5rem;
+    right: 5rem;
     top: 9rem;
     z-index: 51;
 }

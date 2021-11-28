@@ -2,7 +2,7 @@ export type ErrorCallback = (message: string) => void;
 
 export enum ControlModeState { Uninitialized, Stopped, Started}
 
-export enum ControlModeType { Manual, Automatic, Shake}
+export enum ControlModeType { Manual, Joystick, Automatic, Shake}
 
 export abstract class ControlMode {
     private _errorHandler: ErrorCallback | undefined = undefined;

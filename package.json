@@ -1,6 +1,6 @@
 {
   "name": "web-shake",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Shake the Snake",
   "main": "index.js",
   "homepage": "https://dmitrydzz.github.io/web-shake",

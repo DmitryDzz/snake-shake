@@ -1,11 +1,13 @@
 import 'regenerator-runtime/runtime';
 import {Snake} from "./Snake";
+import {ControlMode} from "./control-modes/ControlMode";
 import {ManualControlMode} from "./control-modes/ManualControlMode";
+import {JoystickControlMode} from "./control-modes/JoystickControlMode";
 import {AutomaticControlMode} from "./control-modes/AutomaticControlMode";
 import {ShakeControlMode} from "./control-modes/ShakeControlMode";
-import {ControlMode, ControlModeType} from "./control-modes/ControlMode";
 
 const manualControlMode: ControlMode = new ManualControlMode();
+const joystickControlMode: ControlMode = new JoystickControlMode();
 const automaticControlMode: ControlMode = new AutomaticControlMode();
 const shakeControlMode: ControlMode = new ShakeControlMode();
 let currentControlMode: ControlMode = manualControlMode;
@@ -15,6 +17,9 @@ let snake: Snake | undefined = undefined;
 const onClickModeHandler = async (event: any) => {
     let newControlMode: ControlMode;
     switch (event.target.value) {
+        case "joystick":
+            newControlMode = joystickControlMode;
+            break;
         case "automatic":
             newControlMode = automaticControlMode;
             break;
@@ -29,6 +34,7 @@ const onClickModeHandler = async (event: any) => {
     if (newControlMode.mode !== currentControlMode.mode) {
         currentControlMode = newControlMode;
         await manualControlMode.deactivate();
+        await joystickControlMode.deactivate();
         await automaticControlMode.deactivate();
         await shakeControlMode.deactivate();
         await currentControlMode.activate();
@@ -77,6 +83,7 @@ const outputErrorHandler = (message: string) => {
     initialize();
     (async () => {
         await manualControlMode.initialize(outputErrorHandler);
+        await joystickControlMode.initialize(outputErrorHandler);
         await automaticControlMode.initialize(outputErrorHandler);
         await shakeControlMode.initialize(outputErrorHandler);
 
