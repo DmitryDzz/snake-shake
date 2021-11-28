@@ -70,12 +70,18 @@ export class JoystickControlMode extends ControlMode {
         this._logGamepadStatus();
     }
 
+    private _noGamepadError: boolean = false;
+
     private readonly _logGamepadStatus = () => {
         if (this._gamepad === null) {
             console.warn("Gamepad not found.");
+            this._noGamepadError = true;
             this._outputError("Gamepad not found.");
         } else {
-            console.log("Gamepad OK.")
+            if (this._noGamepadError) {
+                this._noGamepadError = false;
+                this._outputError(""); // (clear the error)
+            }
         }
     }
 }

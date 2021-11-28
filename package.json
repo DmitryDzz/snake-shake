@@ -1,6 +1,6 @@
 {
   "name": "snake-shake",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Shake the Snake",
   "main": "index.js",
   "homepage": "https://dmitrydzz.github.io/web-shake",

@@ -69,9 +69,16 @@ window.onload = () => {
 };
 
 const outputErrorHandler = (message: string) => {
-    console.error(message);
+    if (message !== "")
+        console.error(message);
     const errorElement: HTMLDivElement = document.getElementById("error_message") as HTMLDivElement;
-    errorElement.textContent = `ERROR: ${message}`;
+    if (message === "") {
+        // errorElement.style.display = "none";
+        errorElement.textContent = "";
+    } else {
+        // errorElement.style.display = "block";
+        errorElement.textContent = `ERROR: ${message}`;
+    }
 };
 
 (() => {
