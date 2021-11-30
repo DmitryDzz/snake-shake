@@ -1,3 +1,5 @@
+import {Oscillator} from "./Oscillator";
+
 type numberable = number | undefined;
 
 export interface Measurement {
@@ -13,30 +15,27 @@ export class Options {
 }
 
 export class AccCore {
-    private static readonly TWO_PI = 2.0 * Math.PI;
-    private static readonly INFINITE_PERIOD = 1000000;
-
     private readonly _options: Options;
 
     private _minAccY: number = 0;
     private _maxAccY: number = 0;
     private _accAmplitude: number = 0;
-
     private _debugAccY: numberable = undefined;
 
-    private _amplitude: number = 0.0;
     private _period: numberable = undefined;
-    private _phase: number = 0.0;
-    private _periodStartTime: numberable = undefined;
-
     private _prevPeriod: numberable = undefined;
     private _lastPeriodMeasuredTime: numberable = undefined;
 
+    private _amplitude: number = 0.0;
+
+    private _t0: number | undefined = undefined;
     private _prevY: numberable = undefined;
     private _prevYt: numberable = undefined;
     private _prevT0: numberable = undefined;
 
     private _stopped: boolean = false;
+
+    private _oscillator: Oscillator = new Oscillator();
 
     constructor(options?: Options) {
         this._options = options ?? new Options();
@@ -49,22 +48,23 @@ export class AccCore {
         this._debugAccY = undefined;
         this._amplitude = 0.0;
         this._period = undefined;
-        this._phase = 0.0;
-        this._periodStartTime = undefined;
         this._prevPeriod = undefined;
         this._prevY = undefined;
         this._prevYt = undefined;
         this._prevT0 = undefined;
         this._stopped = false;
+        this._oscillator.stop();
     }
 
     stop() {
         this._clear();
         this._stopped = true;
+        this._oscillator.stop();
     }
 
     start() {
         if (this._stopped) this._stopped = false;
+        this._oscillator.start();
     }
 
     get stopped(): boolean {
@@ -79,67 +79,24 @@ export class AccCore {
         return this._debugAccY ?? 0.0;
     }
 
-    private _t0: number | undefined = undefined;
-
-    private _getCurrentPeriod(t: number): number {
-        if (this._period === undefined) return AccCore.INFINITE_PERIOD;
-        if (this._prevPeriod === undefined) return this._period;
-        const deltaT = t - (this._periodStartTime ?? 0);
-        let result = this._prevPeriod;
-        if (this._period > this._prevPeriod) {
-            result += deltaT * this._options.periodSpeed;
-            if (result > this._period)
-                result = this._period;
-        } else if (this._period < this._prevPeriod) {
-            result -= deltaT * this._options.periodSpeed;
-            if (result < this._period)
-                result = this._period;
-        }
-        return result;
-    }
-
     getPosition11(t: number): number {
-        // FAKE PERIOD AND POSITION TO TEST ANIMATIONS:
-        // this._period = 500;
-        // return Math.sin(AccCore.TWO_PI * t / this._period);
-
-        if (this._stopped || this._period === undefined) return 0.0;
-        if (this._t0 === undefined) this._t0 = t;
-
-        if (this._prevPeriod === undefined) {
-            this._phase = 0.0;
-            this._prevPeriod = this._period;
-            this._periodStartTime = t;
-            //const result = 0.0;
-            //console.log(`++++ START: ph=${this._phase.toFixed(2)}, P=${this._period.toFixed(2)}, PP=${this._prevPeriod.toFixed(2)}, PT=${this._periodStartTime.toFixed(2)}, t=${(t-this._t0)}, y=0.00`);
-            return 0.0;
+        if (!this._stopped && this._period !== undefined) {
+            if (this._t0 === undefined) this._t0 = t;
+            this._oscillator.update(t);
         }
-
-        const period = this._getCurrentPeriod(t);
-        if (period !== this._prevPeriod) {
-            this._phase = Math.abs(this._prevPeriod) > 0.001
-                ? (AccCore.TWO_PI * (t - this._periodStartTime!) / this._prevPeriod) % AccCore.TWO_PI
-                : 0.0;
-            //console.log(`==== ph=${this._phase.toFixed(2)}, P=${this._period.toFixed(2)}, PP=${this._prevPeriod.toFixed(2)}, PT=${(this._periodStartTime!-this._t0)}, t=${(t-this._t0)}`);
-            this._prevPeriod = period;
-            this._periodStartTime = t - this._phase * period / AccCore.TWO_PI;
-        }
-            
-        const result = this._amplitude * Math.sin(AccCore.TWO_PI * (t - this._periodStartTime!) / period);
-        //console.log(`t=${(t-this._t0)}, y=${result.toFixed(2)}`);
-        return result;
+        return this._oscillator.position11;
     }
 
     getPeriod(): number {
-        return this._period ?? 0;
+        return this._oscillator.period;
     }
 
     getAmplitude(): number {
-        return this._amplitude;
+        return this._oscillator.amplitude;
     }
 
     getPhase(): number {
-        return this._phase;
+        return this._oscillator.phase;
     }
 
     update(acc: Measurement) {
@@ -171,8 +128,10 @@ export class AccCore {
                         this._lastPeriodMeasuredTime = t;
                     } else {
                         //console.log(`++++++++++ 1 => _accAmplitude: ${this._accAmplitude}, minAccAmplitude: ${this._options.minAccAmplitude}`);
-                        this._period = AccCore.INFINITE_PERIOD;
+                        this._period = Oscillator.INFINITE_PERIOD;
                     }
+
+                    this._oscillator.set({period: this._period, amplitude: this._amplitude});
                 }
 
                 this._prevT0 = t0;
@@ -187,7 +146,8 @@ export class AccCore {
             // The last period measurement was more than 1.5 periods ago:
             if (this._lastPeriodMeasuredTime && (t - this._lastPeriodMeasuredTime > this._period! * 1.5)) {
                 // console.log("++++++++++ 2");
-                this._period = AccCore.INFINITE_PERIOD;
+                this._period = Oscillator.INFINITE_PERIOD;
+                this._oscillator.set({period: this._period, amplitude: this._amplitude});
             }
         }
 

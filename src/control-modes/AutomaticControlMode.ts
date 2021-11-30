@@ -1,5 +1,6 @@
 import {ControlModeState, ControlModeType} from "./ControlMode";
 import {BaseAutoControlMode} from "./BaseAutoControlMode";
+import {Oscillator} from "../Oscillator";
 
 enum ThumbType { Amplitude, Frequency }
 
@@ -34,8 +35,6 @@ class ThumbData {
 }
 
 export class AutomaticControlMode extends BaseAutoControlMode {
-    private static readonly TWO_PI = 2 * Math.PI;
-
     private readonly _sliderBackgroundNormalColor = "#006539";
     private readonly _sliderBackgroundFocusedColor = "#009051";
 
@@ -46,12 +45,7 @@ export class AutomaticControlMode extends BaseAutoControlMode {
     private readonly _amplitudeData: ThumbData;
     private readonly _frequencyData: ThumbData;
 
-    private _startTime: number | undefined = undefined;
-    private _period: number = 1000;
-    private _amplitude: number = 1;
-    private _phase: number = 0;
-    private _previousPhase: number = 0;
-    private _position11: number = 0;
+    private readonly _oscillator: Oscillator = new Oscillator();
 
     private readonly _minPeriod: number = 500;
     private readonly _maxPeriod: number = 2000;
@@ -90,8 +84,10 @@ export class AutomaticControlMode extends BaseAutoControlMode {
             this._addListeners();
         }
 
-        this._period = this._getPeriod(this._frequencyData.position11);
-        this._amplitude = this._getAmplitude(this._amplitudeData.position11);
+        this._oscillator.set({
+            period: this._getPeriod(this._frequencyData.position11),
+            amplitude: this._getAmplitude(this._amplitudeData.position11)
+        });
 
         if (this._legendDiv) {
             this._updateLegendDiv();
@@ -112,15 +108,8 @@ export class AutomaticControlMode extends BaseAutoControlMode {
     }
 
     getPosition11(time: number): number {
-        if (this._state === ControlModeState.Started) {
-            if (this._startTime === undefined) {
-                this._startTime = time;
-                this._previousPhase = this._phase;
-            }
-            this._phase = (time - this._startTime) * AutomaticControlMode.TWO_PI / this._period + this._previousPhase;
-            this._position11 = this._amplitude * Math.sin(this._phase);
-        }
-        return this._position11;
+        this._oscillator.update(time);
+        return this._oscillator.position11;
     }
 
     protected _initializeHtmlElements() {
@@ -145,11 +134,12 @@ export class AutomaticControlMode extends BaseAutoControlMode {
 
     protected async _start() {
         await super._start();
+        this._oscillator.start();
     }
 
     protected async _stop() {
+        this._oscillator.stop();
         await super._stop();
-        this._startTime = undefined;
     }
 
     private _addListeners() {
@@ -235,11 +225,14 @@ export class AutomaticControlMode extends BaseAutoControlMode {
     }
 
     private _onSliderChanged = (thumbType: ThumbType, _thumbElement: HTMLDivElement, _newValue11: number, _oldValue: number) => {
-        this._startTime = undefined;
         if (thumbType === ThumbType.Frequency) {
-            this._period = this._getPeriod(this._frequencyData.position11);
+            this._oscillator.set({
+                period: this._getPeriod(this._frequencyData.position11)
+            });
         } else if (thumbType === ThumbType.Amplitude) {
-            this._amplitude = this._getAmplitude(this._amplitudeData.position11);
+            this._oscillator.set({
+                amplitude: this._getAmplitude(this._amplitudeData.position11)
+            });
         }
         this._updateLegendDiv();
     }
@@ -256,8 +249,8 @@ export class AutomaticControlMode extends BaseAutoControlMode {
 
     private _updateLegendDiv = () => {
         if (this._legendDiv) {
-            const a = this._amplitude * 10;
-            const f = 1000.0 / this._period;
+            const a = this._oscillator.amplitude * 10;
+            const f = 1000.0 / this._oscillator.period;
             this._legendDiv.innerText = `Amplitude (Δ): ${a.toFixed(2)} cm\nFrequency (ƒ): ${f.toFixed(2)} Hz`;
         }
     }

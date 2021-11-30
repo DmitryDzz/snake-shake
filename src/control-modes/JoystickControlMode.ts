@@ -47,8 +47,26 @@ export class JoystickControlMode extends ControlMode {
     }
 
     private _updateGamepad() {
+        // const prev = this._gamepad;
         this._gamepad = null;
         const gamepads: (Gamepad | null)[] = navigator.getGamepads();
+        // let gamepads: (Gamepad | null)[];
+        // if ((navigator as any).webkitGetGamepads) {
+        //     gamepads = (navigator as any).webkitGetGamepads();
+        //     if (prev === null)
+        //         // console.log("+++++++ webkitGetGamepads");
+        //         this._outputError("webkitGetGamepads");
+        // } else if ((navigator as any).mozGetGamepads) {
+        //     gamepads = (navigator as any).mozGetGamepads();
+        //     if (prev === null)
+        //         // console.log("+++++++ mozGetGamepads");
+        //         this._outputError("mozGetGamepads");
+        // } else {
+        //     gamepads = navigator.getGamepads();
+        //     if (prev === null)
+        //         // console.log("+++++++ getGamepads");
+        //         this._outputError("getGamepads");
+        // }
         for (let i = 0; i < gamepads.length; i++) {
             const gamepad = gamepads[i];
             if (gamepad !== null && this._gamepad === null) {
@@ -59,13 +77,14 @@ export class JoystickControlMode extends ControlMode {
     }
 
     private readonly _gamepadConnectedHandler = (_ev: GamepadEvent) => {
-        console.log("Gamepad connected.")
+        console.log("Gamepad connected.");
+        // this._outputError("_gamepadConnectedHandler");
         this._updateGamepad();
         this._logGamepadStatus();
     }
 
     private readonly _gamepadDisconnectedHandler = (_ev: GamepadEvent) => {
-        console.log("Gamepad disconnected.")
+        console.log("Gamepad disconnected.");
         this._updateGamepad();
         this._logGamepadStatus();
     }

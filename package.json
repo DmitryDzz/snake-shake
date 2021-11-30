@@ -30,7 +30,7 @@
   },
   "scripts": {
     "test": "jest",
-    "live": "parcel src/index.html --target browser --no-source-maps --bundle-node-modules --out-dir ./live --port 2000",
+    "live": "parcel src/index.html --target browser --no-source-maps --bundle-node-modules --out-dir ./live --port 2021 --https",
     "build:clean": "rimraf build/*",
     "build:src": "parcel build src/index.html --target browser --no-source-maps --public-url ./ --bundle-node-modules --out-dir ./build",
     "predeploy": "npm-run-all build:clean build:src",

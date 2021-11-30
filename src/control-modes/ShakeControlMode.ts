@@ -27,14 +27,19 @@ export class ShakeControlMode extends BaseAutoControlMode {
     async initialize(onErrorCallback: (message: string) => void) {
         await super.initialize(onErrorCallback);
 
-        const accelerometerPermissionStatus = await navigator.permissions.query({
-            name: "accelerometer" as PermissionName
-        });
-        const gyroscopePermissionStatus = await navigator.permissions.query({
-            name: "gyroscope" as PermissionName
-        });
-        const hasPermissions: boolean = accelerometerPermissionStatus.state === "granted" &&
-            gyroscopePermissionStatus.state === "granted";
+        let hasPermissions: boolean = false;
+        try {
+            const accelerometerPermissionStatus = await navigator.permissions.query({
+                name: "accelerometer" as PermissionName
+            });
+            const gyroscopePermissionStatus = await navigator.permissions.query({
+                name: "gyroscope" as PermissionName
+            });
+            hasPermissions = accelerometerPermissionStatus.state === "granted" &&
+                gyroscopePermissionStatus.state === "granted";
+        } catch(e: any) {
+            this._outputError(e);
+        }
 
         if (hasPermissions) {
             try {
