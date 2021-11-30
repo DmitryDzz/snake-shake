@@ -1,6 +1,6 @@
 {
   "name": "snake-shake",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Shake the Snake",
   "main": "index.js",
   "homepage": "https://dmitrydzz.github.io/web-shake",
@@ -44,6 +44,12 @@
       {
         "staticPath": "src/images",
         "staticOutDir": "images"
+      },
+      {
+        "staticPath": "src/*.png"
+      },
+      {
+        "staticPath": "src/*.ico"
       }
     ],
     "watcherGlob": "**"
